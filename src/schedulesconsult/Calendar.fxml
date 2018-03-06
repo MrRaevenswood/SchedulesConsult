@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.Font?>
+
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="663.0" prefWidth="840.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <GridPane fx:id="gr_Month" gridLinesVisible="true" layoutX="36.0" layoutY="86.0" prefHeight="492.0" prefWidth="769.0" style="-fx-background-color: white;">
+        <columnConstraints>
+          <ColumnConstraints fx:id="col_Sunday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints fx:id="col_Monday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints fx:id="col_Tuesday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints fx:id="col_Wednesday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints fx:id="col_Thursday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints fx:id="col_Friday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints fx:id="col_Saturday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints fx:id="row_Week1" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints fx:id="row_Week2" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints fx:id="row_Week3" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fx:id="row_Week4" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints fx:id="row_Week5" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+      </GridPane>
+      <Label fx:id="lbl_MonthAndYear" layoutX="320.0" layoutY="20.0" text="March 2018">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <Button fx:id="bt_PrevMonth" layoutX="36.0" layoutY="612.0" mnemonicParsing="false" text="Prev Month" />
+      <Button fx:id="bt_NextMonth" layoutX="736.0" layoutY="612.0" mnemonicParsing="false" text="Next Month" />
+      <Button fx:id="bt_SchAppt" layoutX="192.0" layoutY="612.0" mnemonicParsing="false" text="Schedule Appointment" />
+      <Button fx:id="bt_CancelAppt" layoutX="408.0" layoutY="612.0" mnemonicParsing="false" text="Cancel Appointment" />
+      <Button fx:id="bt_Exit" layoutX="612.0" layoutY="612.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="88.0" text="Exit" />
+   </children>
+</Pane>
