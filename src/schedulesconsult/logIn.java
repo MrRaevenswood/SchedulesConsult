@@ -1,67 +1,79 @@
 package schedulesconsult;
 
+import java.util.Date;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+
 public class logIn {
 
-	private int userName;
-	private int passWord;
-	private int language;
-	private int active;
-	private int appointmentReminders;
+        //FXML Variables for LogIn Form
+        @FXML
+        private TextField txt_UserName;
+        private TextField txt_Password;
+        private RadioButton rb_SpanishLogin;
+        private RadioButton rb_EnglishLogin;
+        private Button bt_Login;
+        private Button bt_CancelLogin;
+    
+	private String userName;
+	private String passWord;
+	private String language;
+	private boolean active;
+	private Date appointmentReminders;
 
+        
+        public logIn(String userName, String passWord, String language) {
+            this.userName = userName;
+            this.passWord = passWord;
+            this.language = language;
+	}
+        
+        private logIn logInAttempt(){
+        }
+        
+        
+        
+        // Getter and Setter Methods
 	public String getUserName() {
-		// TODO - implement logIn.getUserName
-		throw new UnsupportedOperationException();
+		return userName;
 	}
 
 	public String getPassWord() {
-		// TODO - implement logIn.getPassWord
-		throw new UnsupportedOperationException();
+		return passWord;
 	}
 
 	public String getLanguage() {
-		// TODO - implement logIn.getLanguage
-		throw new UnsupportedOperationException();
+		return language;
 	}
 
-	/**
-	 * 
-	 * @param userName
-	 * @param passWord
-	 * @param language
-	 */
-	public logIn(int userName, int passWord, int language) {
-		// TODO - implement logIn.logIn
-		throw new UnsupportedOperationException();
-	}
 
-	public boolean schedulesConsultLogIn() {
-		// TODO - implement logIn.schedulesConsultLogIn
-		throw new UnsupportedOperationException();
-	}
 
-	public Boolean getActive() {
-		// TODO - implement logIn.getActive
-		throw new UnsupportedOperationException();
+	public boolean getActive() {
+		return active;
 	}
+        
+        public void setUserName(){
+            this.userName = txt_UserName.toString();
+        }
+        
+        public void setPassword(){
+            this.passWord = txt_Password.toString();
+        }
+        
+        public void setLanguage(){
+            if(rb_SpanishLogin.)
+        }
 
-	/**
-	 * 
-	 * @param active
-	 */
-	public void setActive(int active) {
+	public void setActive(boolean active) {
 		this.active = active;
 	}
 
-	public void getAppointmentReminders() {
-		// TODO - implement logIn.getAppointmentReminders
-		throw new UnsupportedOperationException();
+	public Date getAppointmentReminders() {
+		return appointmentReminders;
 	}
 
-	/**
-	 * 
-	 * @param appointmentReminders
-	 */
-	public void setAppointmentReminders(int appointmentReminders) {
+
+	public void setAppointmentReminders(Date appointmentReminders) {
 		this.appointmentReminders = appointmentReminders;
 	}
 
