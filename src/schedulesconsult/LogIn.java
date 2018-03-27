@@ -4,7 +4,7 @@ import java.util.Date;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-public class logIn {
+public class LogIn {
 
         //FXML Variables for LogIn Form
         @FXML
@@ -20,15 +20,17 @@ public class logIn {
 	private String language;
 	private boolean active;
 	private Date appointmentReminders;
-
         
-        public logIn(String userName, String passWord, String language) {
-            this.userName = userName;
-            this.passWord = passWord;
-            this.language = language;
-	}
-        
-        private logIn logInAttempt(){
+        public void logInAttempt(){
+            LogIn newLogin = new LogIn();
+            
+            newLogin.setUserName();
+            newLogin.setPassword();
+            
+            //SQLConnection Class Test
+            
+            newLogin.setLanguage();
+            //figure out translation later
         }
         
         
@@ -61,7 +63,13 @@ public class logIn {
         }
         
         public void setLanguage(){
-            if(rb_SpanishLogin.)
+            if(rb_SpanishLogin.isSelected()){
+                this.language = "Spanish";
+            }
+            
+            if(rb_EnglishLogin.isSelected()){
+                this.language = "English";
+            }
         }
 
 	public void setActive(boolean active) {
@@ -76,5 +84,9 @@ public class logIn {
 	public void setAppointmentReminders(Date appointmentReminders) {
 		this.appointmentReminders = appointmentReminders;
 	}
+        
+        public void close(){
+             System.exit(0);
+        }
 
 }

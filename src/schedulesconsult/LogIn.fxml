@@ -4,11 +4,11 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="305.0" prefWidth="578.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="305.0" prefWidth="578.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.LogIn">
    <children>
       <Label layoutX="100.0" layoutY="41.0" text="Schedules Consult">
          <font>
@@ -19,10 +19,13 @@
       <TextField fx:id="txt_Password" layoutX="175.0" layoutY="178.0" />
       <Label layoutX="62.0" layoutY="131.0" text="User Name: " />
       <Label layoutX="62.0" layoutY="183.0" text="Password:" />
-      <Button fx:id="bt_LogIn" layoutX="175.0" layoutY="242.0" mnemonicParsing="false" text="Log In" />
-      <Button fx:id="bt_CancelLogin" layoutX="283.0" layoutY="242.0" mnemonicParsing="false" text="Cancel" />
-      <RadioButton fx:id="rb_SpanishLogin" layoutX="405.0" layoutY="167.0" mnemonicParsing="false" text="Spanish" />
-      <RadioButton fx:id="rb_EnglishLogIn" layoutX="404.0" layoutY="140.0" mnemonicParsing="false" text="English" />
+      <Button fx:id="bt_LogIn" layoutX="175.0" layoutY="242.0" mnemonicParsing="false" onAction="#logInAttempt" text="Log In" />
+      <Button fx:id="bt_CancelLogin" layoutX="283.0" layoutY="242.0" mnemonicParsing="false" onAction="#close" text="Cancel" />
+      <RadioButton fx:id="rb_SpanishLogin" layoutX="405.0" layoutY="167.0" mnemonicParsing="false" selected="true" text="Spanish">
+         <toggleGroup>
+            <ToggleGroup fx:id="EnglishOrSpanish" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="rb_EnglishLogIn" layoutX="404.0" layoutY="140.0" mnemonicParsing="false" selected="true" text="English" toggleGroup="$EnglishOrSpanish" />
       <Label layoutX="383.0" layoutY="109.0" text="Pick your language " />
    </children>
 </Pane>
