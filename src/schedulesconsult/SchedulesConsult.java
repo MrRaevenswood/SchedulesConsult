@@ -17,6 +17,8 @@ import javafx.stage.Stage;
  */
 public class SchedulesConsult extends Application {
     
+    public static String databaseConnectionString = "jdbc:mysql://52.206.157.109/U04Fby?user=U04Fby&password=53688222587";
+    
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("LogIn.fxml"));
@@ -31,7 +33,12 @@ public class SchedulesConsult extends Application {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
+        
         launch(args);
+        
+        
+        
     }
     
 }
