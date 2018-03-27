@@ -52,7 +52,7 @@ public class LogIn {
                     
                     if(passwordCorrect.equals(newLogin.passWord)){
                        
-                        Scene calendar = new Scene(FXMLLoader.load(getClass().getResource("LogIn.fxml")));
+                        Scene calendar = new Scene(FXMLLoader.load(getClass().getResource("Calendar.fxml")));
                         Stage appointmentStage = new Stage();
                         
                         appointmentStage.setScene(calendar);
