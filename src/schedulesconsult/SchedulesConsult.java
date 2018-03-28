@@ -16,8 +16,12 @@ import javafx.stage.Stage;
  * @author raevenswood
  */
 public class SchedulesConsult extends Application {
+
+    public final static String databaseConnectionString = "jdbc:mysql://52.206.157.109:3306/U04Fby";
+    public final static String databaseUser = "U04Fby";
+    public final static String databasePassword = "53688222587";
     
-    public static String databaseConnectionString = "jdbc:mysql://52.206.157.109/U04Fby?user=U04Fby&password=53688222587";
+    
     
     @Override
     public void start(Stage stage) throws Exception {

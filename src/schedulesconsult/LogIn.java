@@ -20,11 +20,12 @@ public class LogIn {
         //FXML Variables for LogIn Form
         @FXML
         private TextField txt_UserName;
+        @FXML
         private TextField txt_Password;
+        @FXML
         private RadioButton rb_SpanishLogin;
-        private RadioButton rb_EnglishLogin;
-        private Button bt_Login;
-        private Button bt_CancelLogin;
+        @FXML
+        private RadioButton rb_EnglishLogIn;
     
 	private String userName;
 	private String passWord;
@@ -32,67 +33,60 @@ public class LogIn {
 	private boolean active;
 	private Date appointmentReminders;
         
-        public void logInAttempt() throws IOException{
+        public void logInAttempt() throws IOException, ClassNotFoundException{
             LogIn newLogin = new LogIn();
+            String logInLanguage = "";
+            newLogin.setUserName(txt_UserName.getText());
+            newLogin.setPassword(txt_Password.getText());
             
-            newLogin.setUserName();
-            newLogin.setPassword();
+            if(rb_SpanishLogin.isSelected()){
+                logInLanguage = "Spanish";
+            }
             
-            //SQLConnection Class Test
+            if(rb_EnglishLogIn.isSelected()){
+                logInLanguage = "English";
+            }
             
-            newLogin.setLanguage();
+            newLogin.setLanguage(logInLanguage);
             //figure out translation later
             try {
-                Connection dbConn =  DriverManager.getConnection(SchedulesConsult.databaseConnectionString);
-                Statement stmt = dbConn.createStatement();
-                ResultSet userExists = stmt.executeQuery("Select userName, password From user Where userName = " + newLogin.userName);
                 
-                if(userExists.equals(newLogin.userName)){
-                    ResultSet passwordCorrect = stmt.executeQuery("Select password From user Where password = " + newLogin.passWord);
+                Class.forName("com.mysql.jdbc.Driver");
+                
+                Connection dbConn =  DriverManager.getConnection(
+                    SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
+
+                Statement stmt = dbConn.createStatement();
+                String dbUserQuery = "Select userName, password From user Where userName = '" +  
+                        newLogin.userName + "' And password = '" + newLogin.passWord + "'";
+                ResultSet userExists = stmt.executeQuery(dbUserQuery);
+                
+                if(!userExists.next()){
                     
-                    if(passwordCorrect.equals(newLogin.passWord)){
+                    Alert userNotFound = new Alert(Alert.AlertType.ERROR);
+                   
+                   if(newLogin.getLanguage() == "English"){
+                        userNotFound.setTitle("Error Connecting to Database");
+                        userNotFound.setHeaderText("Error");
+                        userNotFound.setContentText("User name / Password Combination was not found in the system");
+                   } else if(newLogin.getLanguage() == "Spanish"){
+                       userNotFound.setTitle("Error al conectarse a la base de datos");
+                       userNotFound.setHeaderText("Error");
+                       userNotFound.setContentText("La combinación nombre de usuario / contraseña no se encontró en el sistema");
+                   }
+                   
+                   userNotFound.showAndWait();
+                   return;
+                    
+                }else{
                        
                         Scene calendar = new Scene(FXMLLoader.load(getClass().getResource("Calendar.fxml")));
                         Stage appointmentStage = new Stage();
                         
                         appointmentStage.setScene(calendar);
                         appointmentStage.show();
-                        
-                    }else{
-                        Alert wrongPassword = new Alert(Alert.AlertType.ERROR);
-                        
-                        if(newLogin.getLanguage() == "English"){
-                            wrongPassword.setTitle("Error Connecting to Database");
-                            wrongPassword.setHeaderText("Error");
-                            wrongPassword.setContentText("Given password does not match the one for this user account");
-                        } else if(newLogin.getLanguage() == "Spanish") {  
-                            wrongPassword.setTitle("Error al conectarse a la base de datos");
-                            wrongPassword.setHeaderText("Error");
-                            wrongPassword.setContentText("La contraseña dada no coincide con la de esta cuenta de usuario");
-                        }
-                        
-                        wrongPassword.showAndWait();
-                        return;
-                    }
                     
-                }else{
-                   Alert wrongUserName = new Alert(Alert.AlertType.ERROR);
-                   
-                   if(newLogin.getLanguage() == "English"){
-                        wrongUserName.setTitle("Error Connecting to Database");
-                        wrongUserName.setHeaderText("Error");
-                        wrongUserName.setContentText("User name was not found in the system");
-                   } else if(newLogin.getLanguage() == "Spanish"){
-                       wrongUserName.setTitle("Error al conectarse a la base de datos");
-                       wrongUserName.setHeaderText("Error");
-                       wrongUserName.setContentText("El nombre de usuario no se encontró en el sistema");
-                   }
-                   
-                   wrongUserName.showAndWait();
-                   return;    
-                   
                 }
-                
                 
             } catch (SQLException ex) {
                 Alert sqlException = new Alert(Alert.AlertType.ERROR);
@@ -134,22 +128,16 @@ public class LogIn {
 		return active;
 	}
         
-        public void setUserName(){
-            this.userName = txt_UserName.toString();
+        public void setUserName(String userName){
+            this.userName = userName;
         }
         
-        public void setPassword(){
-            this.passWord = txt_Password.toString();
+        public void setPassword(String password){
+            this.passWord = password;
         }
         
-        public void setLanguage(){
-            if(rb_SpanishLogin.isSelected()){
-                this.language = "Spanish";
-            }
-            
-            if(rb_EnglishLogin.isSelected()){
-                this.language = "English";
-            }
+        public void setLanguage(String language){
+            this.language = language;
         }
 
 	public void setActive(boolean active) {
