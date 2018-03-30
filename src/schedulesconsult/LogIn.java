@@ -33,6 +33,15 @@ public class LogIn {
 	private boolean active;
 	private Date appointmentReminders;
         
+        public void createNewUser() throws IOException{
+            Scene newUser = new Scene(FXMLLoader.load(getClass().getResource("addNewUser.fxml")));
+            Stage newUserStage = new Stage();
+                        
+            newUserStage.setScene(newUser);
+            newUserStage.show();         
+        }
+        
+        
         public void logInAttempt() throws IOException, ClassNotFoundException{
             LogIn newLogin = new LogIn();
             String logInLanguage = "";
@@ -76,16 +85,19 @@ public class LogIn {
                    }
                    
                    userNotFound.showAndWait();
+                   dbConn.close();
                    return;
                     
                 }else{
                        
+                        dbConn.close();
+                        
                         Scene calendar = new Scene(FXMLLoader.load(getClass().getResource("Calendar.fxml")));
                         Stage appointmentStage = new Stage();
                         
                         appointmentStage.setScene(calendar);
                         appointmentStage.show();
-                    
+                        
                 }
                 
             } catch (SQLException ex) {
@@ -102,7 +114,7 @@ public class LogIn {
                 }
                 
                 sqlException.showAndWait();
-                
+               
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
             }
         }

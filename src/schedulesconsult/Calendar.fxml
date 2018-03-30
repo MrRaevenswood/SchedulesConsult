@@ -8,10 +8,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="663.0" prefWidth="840.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="959.0" prefWidth="1109.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <GridPane fx:id="gr_Month" gridLinesVisible="true" layoutX="36.0" layoutY="86.0" prefHeight="492.0" prefWidth="769.0" style="-fx-background-color: white;">
+      <GridPane fx:id="gr_Month" gridLinesVisible="true" layoutX="25.0" layoutY="86.0" prefHeight="492.0" prefWidth="769.0" style="-fx-background-color: white;">
         <columnConstraints>
           <ColumnConstraints fx:id="col_Sunday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
           <ColumnConstraints fx:id="col_Monday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -34,10 +33,31 @@
             <Font size="36.0" />
          </font>
       </Label>
-      <Button fx:id="bt_PrevMonth" layoutX="36.0" layoutY="612.0" mnemonicParsing="false" text="Prev Month" />
-      <Button fx:id="bt_NextMonth" layoutX="736.0" layoutY="612.0" mnemonicParsing="false" text="Next Month" />
-      <Button fx:id="bt_SchAppt" layoutX="192.0" layoutY="612.0" mnemonicParsing="false" text="Schedule Appointment" />
-      <Button fx:id="bt_CancelAppt" layoutX="408.0" layoutY="612.0" mnemonicParsing="false" text="Cancel Appointment" />
-      <Button fx:id="bt_Exit" layoutX="612.0" layoutY="612.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="88.0" text="Exit" />
+      <Button fx:id="bt_PrevMonth" layoutX="42.0" layoutY="47.0" mnemonicParsing="false" text="Prev Month" />
+      <Button fx:id="bt_NextMonth" layoutX="699.0" layoutY="47.0" mnemonicParsing="false" text="Next Month" />
+      <Button fx:id="bt_SchAppt" layoutX="948.0" layoutY="814.0" mnemonicParsing="false" text="Schedule Appointment" />
+      <Button fx:id="bt_Exit" layoutX="997.0" layoutY="902.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="88.0" text="Exit" />
+      <Button fx:id="bt_AddCustomer" layoutX="986.0" layoutY="860.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" text="Add Customer" />
+      <GridPane fx:id="gr_Week" gridLinesVisible="true" layoutX="25.0" layoutY="759.0" prefHeight="186.0" prefWidth="779.0" style="-fx-background-color: white;">
+         <columnConstraints>
+            <ColumnConstraints fx:id="col_Sunday1" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints fx:id="col_Monday1" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints fx:id="col_Tuesday1" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints fx:id="col_Wednesday1" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints fx:id="col_Thursday1" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints fx:id="col_Friday1" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints fx:id="col_Saturday1" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints fx:id="row_Week11" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+      </GridPane>
+      <Label fx:id="lbl_Week" layoutX="352.0" layoutY="676.0" text="Week 1">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <Button fx:id="bt_LastWeek" layoutX="29.0" layoutY="717.0" mnemonicParsing="false" text="Last Week" />
+      <Button fx:id="bt_NextWeek" layoutX="730.0" layoutY="717.0" mnemonicParsing="false" text="Next Week" />
    </children>
 </Pane>

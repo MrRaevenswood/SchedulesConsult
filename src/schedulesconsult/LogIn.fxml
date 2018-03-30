@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
@@ -8,7 +9,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="305.0" prefWidth="578.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.LogIn">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="305.0" prefWidth="578.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.LogIn">
    <children>
       <Label layoutX="100.0" layoutY="41.0" text="Schedules Consult">
          <font>
@@ -27,5 +28,6 @@
          </toggleGroup></RadioButton>
       <RadioButton fx:id="rb_EnglishLogIn" layoutX="404.0" layoutY="140.0" mnemonicParsing="false" selected="true" text="English" toggleGroup="$EnglishOrSpanish" />
       <Label layoutX="383.0" layoutY="109.0" text="Pick your language " />
+      <Hyperlink fx:id="href_RegisterUser" layoutX="216.0" layoutY="211.0" onMouseClicked="#createNewUser" text="Not Registered?" textFill="#01141e" underline="true" />
    </children>
 </Pane>
