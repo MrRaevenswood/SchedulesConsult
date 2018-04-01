@@ -29,7 +29,7 @@ public class customerRecords {
     @FXML
     private TextField txt_Country;
     @FXML
-    private TextField txt_Address;
+    private TextArea txt_Address;
     @FXML
     private TextField txt_PhoneNumber;
     @FXML
@@ -52,9 +52,9 @@ public class customerRecords {
         boolean isAddressUnique, isCityUnique,isCountryUnique;      
         int addressId, cityId, countryId;
         
-        String countryIdQuery = "Select countryId From country Where = '" + newCustomer.getcustomerCountry() + "'";
-        String cityIdQuery = "Select cityId From city Where = '" + newCustomer.getcustomerCity() + "'";
-        String addressIdQuery = "Select addressId From address Where = '" + newCustomer.getcustomerAddress() + "'";
+        String countryIdQuery = "Select countryId From country Where country = '" + newCustomer.getcustomerCountry() + "'";
+        String cityIdQuery = "Select cityId From city Where city = '" + newCustomer.getcustomerCity() + "'";
+        String addressIdQuery = "Select addressId From address Where address = '" + newCustomer.getcustomerAddress() + "'";
          
         LocalDateTime currentTime = LocalDateTime.now();
         
@@ -103,7 +103,7 @@ public class customerRecords {
             
             if(isAddressUnique == true){
                 String addressInsertQuery = "Insert into address (address, cityId, postalCode, phone, createDate, createdBy, lastUpdate, lastUpdatedBy)"
-                        + "Values ('" + newCustomer.getcustomerAddress() + "','" + cityId + "','" + txt_PostalCode.getText() + "','" + "','" +
+                        + "Values ('" + newCustomer.getcustomerAddress() + "','" + cityId + "','" + txt_PostalCode.getText() + "','" +
                         txt_PhoneNumber.getText() + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" + currentTime + "','" +
                         SchedulesConsult.currentLogIn + "')";
                 stmt.executeUpdate(addressInsertQuery);
@@ -117,7 +117,7 @@ public class customerRecords {
                 addressId = addressIdResult.getInt(1);
             }                                                                                                          
             
-            String customerInsertQuery = "Insert into customer (customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdatedBy) "
+            String customerInsertQuery = "Insert into customer (customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy) "
                     + "Values ('" + txt_FullName.getText() + "'," + addressId + ",true," + "'" + currentTime + "','" + SchedulesConsult.currentLogIn
                     + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "')";
             stmt.executeUpdate(customerInsertQuery);
@@ -162,7 +162,7 @@ public class customerRecords {
     public Boolean isAddressUnique(Connection dbConn, String Address) throws SQLException{
      
         Statement checkAddress = dbConn.createStatement();
-        String checkAddressQuery = "Select * From Address Where Address = '" + Address + "'";
+        String checkAddressQuery = "Select * From address Where Address = '" + Address + "'";
         ResultSet dupAddress = checkAddress.executeQuery(checkAddressQuery);
         
         if(!dupAddress.next()){
@@ -174,7 +174,7 @@ public class customerRecords {
     
     public Boolean isCountryUnique(Connection dbConn, String Country) throws SQLException{
         Statement checkCountry = dbConn.createStatement();
-        String checkCountryQuery = "Select * From Country Where Country = '" +
+        String checkCountryQuery = "Select * From country Where Country = '" +
                Country + "'";
         ResultSet dupCountry = checkCountry.executeQuery(checkCountryQuery);
         
@@ -187,7 +187,7 @@ public class customerRecords {
     
     public Boolean isCityUnique(Connection dbConn, String City) throws SQLException{
         Statement checkCity = dbConn.createStatement();
-        String checkCityQuery = "Select * From City Where City = '" +
+        String checkCityQuery = "Select * From city Where City = '" +
                 City + "'";
         ResultSet dupCity = checkCity.executeQuery(checkCityQuery);
         
@@ -197,5 +197,9 @@ public class customerRecords {
             return false;
         }
     }
-
+    
+    public void close(){
+       Stage stage = (Stage) bt_AddCustomer.getScene().getWindow();
+       stage.close();
+    }
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -8,37 +9,12 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="959.0" prefWidth="1109.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#openCustomerAdd" prefHeight="409.0" prefWidth="1109.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.calendar">
    <children>
-      <GridPane fx:id="gr_Month" gridLinesVisible="true" layoutX="25.0" layoutY="86.0" prefHeight="492.0" prefWidth="769.0" style="-fx-background-color: white;">
-        <columnConstraints>
-          <ColumnConstraints fx:id="col_Sunday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-          <ColumnConstraints fx:id="col_Monday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints fx:id="col_Tuesday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints fx:id="col_Wednesday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints fx:id="col_Thursday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints fx:id="col_Friday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints fx:id="col_Saturday" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints fx:id="row_Week1" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints fx:id="row_Week2" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints fx:id="row_Week3" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints fx:id="row_Week4" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints fx:id="row_Week5" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-      </GridPane>
-      <Label fx:id="lbl_MonthAndYear" layoutX="320.0" layoutY="20.0" text="March 2018">
-         <font>
-            <Font size="36.0" />
-         </font>
-      </Label>
-      <Button fx:id="bt_PrevMonth" layoutX="42.0" layoutY="47.0" mnemonicParsing="false" text="Prev Month" />
-      <Button fx:id="bt_NextMonth" layoutX="699.0" layoutY="47.0" mnemonicParsing="false" text="Next Month" />
-      <Button fx:id="bt_SchAppt" layoutX="948.0" layoutY="814.0" mnemonicParsing="false" text="Schedule Appointment" />
-      <Button fx:id="bt_Exit" layoutX="997.0" layoutY="902.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="88.0" text="Exit" />
-      <Button fx:id="bt_AddCustomer" layoutX="986.0" layoutY="860.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="99.0" text="Add Customer" />
-      <GridPane fx:id="gr_Week" gridLinesVisible="true" layoutX="25.0" layoutY="759.0" prefHeight="186.0" prefWidth="779.0" style="-fx-background-color: white;">
+      <Button fx:id="bt_SchAppt" layoutX="927.0" layoutY="266.0" mnemonicParsing="false" text="Schedule Appointment" />
+      <Button fx:id="bt_Exit" layoutX="997.0" layoutY="352.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="88.0" text="Exit" />
+      <Button fx:id="bt_AddCustomer" layoutX="963.0" layoutY="310.0" mnemonicParsing="false" onMouseClicked="#openCustomerAdd" prefHeight="27.0" prefWidth="122.0" text="Add Customer" />
+      <GridPane fx:id="gr_Week" gridLinesVisible="true" layoutX="25.0" layoutY="209.0" prefHeight="186.0" prefWidth="779.0" style="-fx-background-color: white;">
          <columnConstraints>
             <ColumnConstraints fx:id="col_Sunday1" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints fx:id="col_Monday1" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -52,12 +28,30 @@
             <RowConstraints fx:id="row_Week11" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
       </GridPane>
-      <Label fx:id="lbl_Week" layoutX="352.0" layoutY="676.0" text="Week 1">
+      <Button fx:id="bt_LastWeek" layoutX="204.0" layoutY="125.0" mnemonicParsing="false" text="Last Week" />
+      <Button fx:id="bt_NextWeek" layoutX="542.0" layoutY="125.0" mnemonicParsing="false" text="Next Week" />
+      <DatePicker fx:id="datePick_MontlyDate" layoutX="890.0" layoutY="111.0" />
+      <Label layoutX="210.0" layoutY="25.0" prefHeight="44.0" prefWidth="409.0" text="Appointment Calendar">
          <font>
             <Font size="36.0" />
          </font>
       </Label>
-      <Button fx:id="bt_LastWeek" layoutX="29.0" layoutY="717.0" mnemonicParsing="false" text="Last Week" />
-      <Button fx:id="bt_NextWeek" layoutX="730.0" layoutY="717.0" mnemonicParsing="false" text="Next Week" />
+      <Label layoutX="287.0" layoutY="69.0" prefHeight="29.0" prefWidth="255.0" text="Weekly Calendar View">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="792.0" layoutY="69.0" prefHeight="29.0" prefWidth="292.0" text="Monthly View DatePicker">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="57.0" layoutY="178.0" text="Sunday" />
+      <Label layoutX="279.0" layoutY="180.0" text="Tuesday" />
+      <Label layoutX="170.0" layoutY="180.0" prefHeight="17.0" prefWidth="57.0" text="Monday" />
+      <Label layoutX="378.0" layoutY="180.0" text="Wednesday" />
+      <Label layoutX="497.0" layoutY="180.0" text="Thursday" />
+      <Label layoutX="619.0" layoutY="180.0" text="Friday" />
+      <Label layoutX="725.0" layoutY="180.0" text="Saturday" />
    </children>
 </Pane>

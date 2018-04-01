@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="566.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.customerRecords">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="566.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.customerRecords">
    <children>
       <Label layoutX="168.0" layoutY="53.0" text="Add A Customer Record ">
          <font>
@@ -26,7 +26,7 @@
       <Label layoutX="153.0" layoutY="268.0" text="Postal Code" />
       <Label layoutX="175.0" layoutY="303.0" text="Country" />
       <Label layoutX="136.0" layoutY="343.0" text="Phone Number" />
-      <Button fx:id="bt_AddCustomer" layoutX="251.0" layoutY="401.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="51.0" text="Add" />
-      <Button fx:id="bt_CancelCustomerAdd" layoutX="348.0" layoutY="401.0" mnemonicParsing="false" text="Cancel" />
+      <Button fx:id="bt_AddCustomer" layoutX="251.0" layoutY="401.0" mnemonicParsing="false" onMouseClicked="#addCustomerRecord" prefHeight="25.0" prefWidth="51.0" text="Add" />
+      <Button fx:id="bt_CancelCustomerAdd" layoutX="348.0" layoutY="401.0" mnemonicParsing="false" onMouseClicked="#close" text="Cancel" />
    </children>
 </Pane>
