@@ -92,6 +92,8 @@ public class LogIn {
                        
                         dbConn.close();
                         
+                        SchedulesConsult.currentLogIn = newLogin.getUserName();
+                        
                         Scene calendar = new Scene(FXMLLoader.load(getClass().getResource("Calendar.fxml")));
                         Stage appointmentStage = new Stage();
                         
