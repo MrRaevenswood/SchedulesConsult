@@ -30,7 +30,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.TextBox;
 import javafx.stage.Stage;
 
 public class calendar implements Initializable{
@@ -51,19 +50,19 @@ public class calendar implements Initializable{
         private DatePicker datePick_MonthlyDate;
         
         @FXML
-        private TextBox textBox_SundayDate;
+        private TextField textField_SundayDate;
         @FXML
-        private TextBox textBox_MondayDate;
+        private TextField textField_MondayDate;
         @FXML
-        private TextBox textBox_TuesdayDate;
+        private TextField textField_TuesdayDate;
         @FXML
-        private TextBox textBox_WednesdayDate;
+        private TextField textField_WednesdayDate;
         @FXML
-        private TextBox textBox_ThursdayDate;
+        private TextField textField_ThursdayDate;
         @FXML
-        private TextBox textBox_FridayDate;
+        private TextField textField_FridayDate;
         @FXML
-        private TextBox textBox_SaturdayDate;
+        private TextField textField_SaturdayDate;
         
         private int day;
 	private int month;
@@ -71,11 +70,8 @@ public class calendar implements Initializable{
 	private int time;
 	private int appointments;
         
-        private ArrayList<Integer> weeklyDates;
-        private Map<Integer,String> dayToHbox = new HashMap<Integer,String>();
-        private final ArrayList<TextBox> textBoxList = Arrays.asArrayList(textBox_MondayDate, textBox_TuesdayDate,
-                textBox_WednesdayDate, textBox_ThursdayDate, textBox_FridayDate, textBox_SaturdayDate
-                ,textBox_SundayDate);
+        private ArrayList<Integer> weeklyDates = new ArrayList<>();
+        private final ArrayList<TextField> textFieldList = new ArrayList<>();
         private final List<Integer> daysOfWeek = Arrays.asList(1,2,3,4,5,6,7);
         
         public void calendarWeeklyDatePopulate(){
@@ -87,7 +83,9 @@ public class calendar implements Initializable{
                     firstDateOfWeek + 2, firstDateOfWeek + 3, firstDateOfWeek + 3,
                     firstDateOfWeek + 4, firstDateOfWeek + 5, firstDateOfWeek + 6));
             
-            weeklyDates.stream().forEach(x -> textBoxList);         
+            daysOfWeek.stream().forEach(x -> textFieldList.get(x - 1).setText(weeklyDates.get(x - 1).toString())); 
+            
+            System.out.println("Contains: " + weeklyDates.get(0));
         }
 
 	public void getDay() {
@@ -167,8 +165,13 @@ public class calendar implements Initializable{
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        
-        daysOfWeek.forEach(x->dayToHbox.put(x, textBoxList.get(x - 1)));
+        textFieldList.add(textField_MondayDate);
+        textFieldList.add(textField_TuesdayDate);
+        textFieldList.add(textField_WednesdayDate);
+        textFieldList.add(textField_ThursdayDate);
+        textFieldList.add(textField_FridayDate);
+        textFieldList.add(textField_SaturdayDate);
+        textFieldList.add(textField_SundayDate);
     }
 
     
