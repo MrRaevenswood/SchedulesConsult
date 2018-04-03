@@ -38,7 +38,7 @@
       </GridPane>
       <Button fx:id="bt_LastWeek" layoutX="210.0" layoutY="111.0" mnemonicParsing="false" text="Last Week" />
       <Button fx:id="bt_NextWeek" layoutX="497.0" layoutY="111.0" mnemonicParsing="false" text="Next Week" />
-      <DatePicker fx:id="datePick_MontlyDate" layoutX="890.0" layoutY="111.0" />
+      <DatePicker fx:id="datePick_MonthlyDate" layoutX="890.0" layoutY="111.0" onAction="#calendarWeeklyDatePopulate" />
       <Label layoutX="210.0" layoutY="25.0" prefHeight="53.0" prefWidth="366.0" text="Appointment Calendar">
          <font>
             <Font size="36.0" />
