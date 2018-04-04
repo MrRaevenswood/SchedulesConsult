@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -29,6 +30,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.TableRow;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -44,8 +46,6 @@ public class calendar implements Initializable{
         private Button bt_LastWeek;
         @FXML
         private Button bt_NextWeek;
-        @FXML
-        private GridPane gr_Week;
         @FXML
         private DatePicker datePick_MonthlyDate;
         
@@ -64,6 +64,23 @@ public class calendar implements Initializable{
         @FXML
         private TextField textField_SaturdayDate;
         
+        @FXML
+        private TableView tbl_Appointments;
+        @FXML
+        private TableColumn col_Monday;
+        @FXML
+        private TableColumn col_Tuesday;
+        @FXML
+        private TableColumn col_Wednesday;
+        @FXML
+        private TableColumn col_Thursday;
+        @FXML
+        private TableColumn col_Friday;
+        @FXML
+        private TableColumn col_Saturday;
+        @FXML
+        private TableColumn col_Sunday;
+        
         private int day;
 	private int month;
 	private int year;
@@ -73,9 +90,10 @@ public class calendar implements Initializable{
         private ArrayList<Integer> weeklyDates = new ArrayList<>();
         private final ArrayList<TextField> textFieldList = new ArrayList<>();
         private final List<Integer> daysOfWeek = Arrays.asList(1,2,3,4,5,6,7);
+        private LocalDate selectedDate;
         
         public void calendarWeeklyDatePopulate(){
-            LocalDate selectedDate = datePick_MonthlyDate.getValue();
+            selectedDate = datePick_MonthlyDate.getValue();
             DayOfWeek day = selectedDate.getDayOfWeek();
             int dayOfMonth = selectedDate.getDayOfMonth();
             int firstDateOfWeek = dayOfMonth - (day.getValue() - 1);
@@ -88,7 +106,54 @@ public class calendar implements Initializable{
             
             weeklyDates.clear();
         }
+        
+        public void populateAppointmentTable(LocalDate selectedDate) throws ClassNotFoundException{
+            int year = selectedDate.getYear();
+            Month month = selectedDate.getMonth();
+            int currentUserId = 0;
+            
+            try{
+                Class.forName("com.mysql.jdbc.Driver");
+                
+                Connection dbConn =  DriverManager.getConnection(
+                    SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
 
+                Statement stmt = dbConn.createStatement();
+                
+                //Use a pivot table and DAYNAME(start) in the Select clause to create the table instead of this mess
+                String apptThisMondayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
+                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
+                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Monday' Order By start Asc";
+                
+                String apptThisTuesdayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
+                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
+                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Tuesday' Order By start Asc";
+                
+                String apptThisWednesdayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
+                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
+                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Wednesday' Order By start Asc";
+                
+                String apptThisThursdayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
+                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
+                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Thursday' Order By start Asc";
+                
+                String apptThisFridayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
+                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
+                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Friday' Order By start Asc";
+                
+                String apptThisSaturdayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
+                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
+                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Saturday' Order By start Asc";
+                
+                ResultSet apptThisWeek = stmt.executeQuery(apptThisWeekQuery);
+                
+                apptThisWeek.
+            }catch(SQLException ex){
+                
+            }
+            
+            
+        }
 	public void getDay() {
 		// TODO - implement calendarMonthApp.getDay
 		throw new UnsupportedOperationException();
@@ -172,7 +237,7 @@ public class calendar implements Initializable{
         textFieldList.add(textField_ThursdayDate);
         textFieldList.add(textField_FridayDate);
         textFieldList.add(textField_SaturdayDate);
-        textFieldList.add(textField_SundayDate);
+        textFieldList.add(textField_SundayDate);      
     }
 
     
