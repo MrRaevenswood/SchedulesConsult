@@ -25,6 +25,8 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -92,7 +94,7 @@ public class calendar implements Initializable{
         private final List<Integer> daysOfWeek = Arrays.asList(1,2,3,4,5,6,7);
         private LocalDate selectedDate;
         
-        public void calendarWeeklyDatePopulate(){
+        public void calendarWeeklyDatePopulate() throws ClassNotFoundException{
             selectedDate = datePick_MonthlyDate.getValue();
             DayOfWeek day = selectedDate.getDayOfWeek();
             int dayOfMonth = selectedDate.getDayOfMonth();
@@ -103,6 +105,8 @@ public class calendar implements Initializable{
                     firstDateOfWeek + 4, firstDateOfWeek + 5, firstDateOfWeek + 6));
             
             daysOfWeek.stream().forEach(x -> textFieldList.get(x - 1).setText(weeklyDates.get(x - 1).toString())); 
+            
+            populateAppointmentTable(selectedDate);
             
             weeklyDates.clear();
         }
@@ -158,12 +162,23 @@ public class calendar implements Initializable{
                     "        ELSE null" +
                     "	END As 'Sunday Appointments'" +
                     "From appointment" +
-                    "Where userid = 1 AND ( Year(start) = '" + year + "' AND Month(start) = '"+ 
+                    "Where userid = "+ currentUserId +" AND ( Year(start) = '" + year + "' AND Month(start) = '"+ 
                         month.toString() +"' AND day(start) Between "+ weeklyDates.get(0) + " AND " 
                         + weeklyDates.get(weeklyDates.size() - 1) + ")";
                 
                 ResultSet apptThisWeek = stmt.executeQuery(apptThisWeekQuery);
+                ObservableList<String> appts = FXCollections.observableArrayList();
                 
+                while(apptThisWeek.next()){
+                    for(int i = 1; i <= apptThisWeek.getMetaData().getColumnCount(); i++){
+                        appts.add(apptThisWeek.getString(i));
+                    }   
+                }
+                tbl_Appointments.setItems(appts);
+                
+                
+                
+               
                 
             }catch(SQLException ex){
                 
