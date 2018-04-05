@@ -121,33 +121,50 @@ public class calendar implements Initializable{
                 Statement stmt = dbConn.createStatement();
                 
                 //Use a pivot table and DAYNAME(start) in the Select clause to create the table instead of this mess
-                String apptThisMondayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
-                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
-                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Monday' Order By start Asc";
-                
-                String apptThisTuesdayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
-                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
-                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Tuesday' Order By start Asc";
-                
-                String apptThisWednesdayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
-                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
-                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Wednesday' Order By start Asc";
-                
-                String apptThisThursdayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
-                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
-                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Thursday' Order By start Asc";
-                
-                String apptThisFridayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
-                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
-                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Friday' Order By start Asc";
-                
-                String apptThisSaturdayQuery = "Select FullName + ' ' + Hour(start) + 'Until ' + Hour(end) + '@' + contact From appointment join customer Where appointment.customerId = customer.customerId "
-                        + "AND userId =" + currentUserId + " AND (Year(start) = " + year + " AND Month(start) = " + month.name() + " AND Day(start) Between " + 
-                        weeklyDates.get(0) + " AND " + weeklyDates.get(weeklyDates.size() - 1) + " AND DAYNAME(start) = 'Saturday' Order By start Asc";
+                String apptThisWeekQuery = "Select Hour(start)," +
+                    "	CASE" +
+                    "		WHEN dayname(start) = 'Monday'" +
+                    "        THEN  'X' " +
+                    "        ELSE null" +
+                    "	END As 'Monday Appointments'," +
+                    "    CASE\n" +
+                    "		WHEN dayname(start) = 'Tuesday'" +
+                    "        THEN 'X'" +
+                    "        ELSE null" +
+                    "	END As 'Tuesday Appointments'," +
+                    "    CASE" +
+                    "		WHEN dayname(start) = 'Wednesday'" +
+                    "        THEN 'X'" +
+                    "        ELSE null" +
+                    "	END As 'Wednesday Appointments'," +
+                    "    CASE" +
+                    "		WHEN dayname(start) = 'Thursday'" +
+                    "        THEN 'X'" +
+                    "        ELSE null" +
+                    "	END As 'Thursday Appointments'," +
+                    "    CASE" +
+                    "		WHEN dayname(start) = 'Friday'" +
+                    "        THEN 'X'" +
+                    "        ELSE null" +
+                    "	END As 'Friday Appointments'," +
+                    "    CASE" +
+                    "		WHEN dayname(start) = 'Saturday'" +
+                    "        THEN 'X'" +
+                    "        ELSE null" +
+                    "	END As 'Saturday Appointments'," +
+                    "    CASE" +
+                    "		WHEN dayname(start) = 'Sunday'" +
+                    "        THEN 'X'" +
+                    "        ELSE null" +
+                    "	END As 'Sunday Appointments'" +
+                    "From appointment" +
+                    "Where userid = 1 AND ( Year(start) = '" + year + "' AND Month(start) = '"+ 
+                        month.toString() +"' AND day(start) Between "+ weeklyDates.get(0) + " AND " 
+                        + weeklyDates.get(weeklyDates.size() - 1) + ")";
                 
                 ResultSet apptThisWeek = stmt.executeQuery(apptThisWeekQuery);
                 
-                apptThisWeek.
+                
             }catch(SQLException ex){
                 
             }
