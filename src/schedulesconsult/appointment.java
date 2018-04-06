@@ -1,132 +1,125 @@
 package schedulesconsult;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+
 public class appointment {
 
-	private int appointmentTitle;
-	private int appointmentDescription;
-	private int appointmentLocation;
-	private int appointmentContact;
-	private int appointmentUrl;
-	private int appointmentStart;
-	private int appointmentEnd;
+	private String appointmentTitle;
+	private String appointmentDescription;
+	private String appointmentLocation;
+	private String appointmentContact;
+	private String appointmentUrl;
+	private String appointmentStart;
+	private String appointmentEnd;
 	private int reminderIncrement;
+        
+        @FXML
+        private TextField txt_AppointmentTitle;
+        @FXML
+        private TextField txt_AppointmentDescription;
+        @FXML
+        private TextField txt_AppointmentLocation;
+        @FXML
+        private TextField txt_AppointmentContact;
+        @FXML
+        private TextField txt_AppointmentURL;
+        
+        @FXML
+        private ComboBox comBx_StartTime;
+        @FXML
+        private ComboBox comBx_EndTime;
+        
+        @FXML
+        private Button bt_ScheduleAppointment;
+        @FXML
+        private Button bt_Cancel;
+        
+        
+        public appointment(String title, String description, String location, String contact,
+                String url, String start, String end, int reminderIncrement){
+            this.appointmentTitle = title;
+            this.appointmentDescription = description;
+            this.appointmentLocation = location;
+            this.appointmentContact = contact;
+            this.appointmentUrl = url;
+            this.appointmentStart = start;
+            this.appointmentEnd = end;
+            this.reminderIncrement = reminderIncrement;
+        }
+        
+        public void createAppointment(){
+            appointment newAppt = new appointment(txt_AppointmentTitle.getText(), txt_AppointmentDescription.getText(),
+                txt_AppointmentLocation.getText(), txt_AppointmentContact.getText(), txt_AppointmentURL.getText(),
+                comBx_StartTime.getSelectionModel().getSelectedItem().toString(), comBx_EndTime.getSelectionModel().getSelectedItem().toString(),
+                15);
+            
+            
+        }
 
-	public void getAppointmentTitle() {
-		// TODO - implement appointment.getAppointmentTitle
-		throw new UnsupportedOperationException();
+	public String getAppointmentTitle() {
+		return this.appointmentTitle;
 	}
 
-	/**
-	 * 
-	 * @param appointmentTitle
-	 */
-	public void setAppointmentTitle(int appointmentTitle) {
+	public void setAppointmentTitle(String appointmentTitle) {
 		this.appointmentTitle = appointmentTitle;
 	}
 
-	public void getAppointmentDescription() {
-		// TODO - implement appointment.getAppointmentDescription
-		throw new UnsupportedOperationException();
+	public String getAppointmentDescription() {
+		return this.appointmentDescription;
 	}
 
-	/**
-	 * 
-	 * @param appointmentDescription
-	 */
-	public void setAppointmentDescription(int appointmentDescription) {
+	public void setAppointmentDescription(String appointmentDescription) {
 		this.appointmentDescription = appointmentDescription;
 	}
 
-	public void getAppointmentLocation() {
-		// TODO - implement appointment.getAppointmentLocation
-		throw new UnsupportedOperationException();
+	public String getAppointmentLocation() {
+		return this.appointmentLocation;
 	}
-
-	/**
-	 * 
-	 * @param appointmentLocation
-	 */
-	public void setAppointmentLocation(int appointmentLocation) {
+        
+	public void setAppointmentLocation(String appointmentLocation) {
 		this.appointmentLocation = appointmentLocation;
 	}
 
-	public void getAppointmentContact() {
-		// TODO - implement appointment.getAppointmentContact
-		throw new UnsupportedOperationException();
+	public String getAppointmentContact() {
+		return this.appointmentContact;
 	}
 
-	/**
-	 * 
-	 * @param appointmentContact
-	 */
-	public void setAppointmentContact(int appointmentContact) {
+	public void setAppointmentContact(String appointmentContact) {
 		this.appointmentContact = appointmentContact;
 	}
 
-	public void getAppointmentUrl() {
-		// TODO - implement appointment.getAppointmentUrl
-		throw new UnsupportedOperationException();
+	public String getAppointmentUrl() {
+		return this.appointmentUrl;
 	}
 
-	/**
-	 * 
-	 * @param appointmentUrl
-	 */
-	public void setAppointmentUrl(int appointmentUrl) {
+	public void setAppointmentUrl(String appointmentUrl) {
 		this.appointmentUrl = appointmentUrl;
 	}
 
-	public void getAppointmentStart() {
-		// TODO - implement appointment.getAppointmentStart
-		throw new UnsupportedOperationException();
+	public String getAppointmentStart() {
+		return this.appointmentStart;
 	}
 
-	/**
-	 * 
-	 * @param appointmentStart
-	 */
-	public void setAppointmentStart(int appointmentStart) {
+	public void setAppointmentStart(String appointmentStart) {
 		this.appointmentStart = appointmentStart;
 	}
 
-	public void getAppointmentEnd() {
-		// TODO - implement appointment.getAppointmentEnd
-		throw new UnsupportedOperationException();
+	public String getAppointmentEnd() {
+		return this.appointmentEnd;
 	}
 
-	/**
-	 * 
-	 * @param appointmentEnd
-	 */
-	public void setAppointmentEnd(int appointmentEnd) {
+	public void setAppointmentEnd(String appointmentEnd) {
 		this.appointmentEnd = appointmentEnd;
 	}
 
-	public void getReminderIncrement() {
-		// TODO - implement appointment.getReminderIncrement
-		throw new UnsupportedOperationException();
+	public int getReminderIncrement() {
+		return this.reminderIncrement;
 	}
 
-	/**
-	 * 
-	 * @param reminderIncrement
-	 */
 	public void setReminderIncrement(int reminderIncrement) {
 		this.reminderIncrement = reminderIncrement;
 	}
-
-	public void getAttribute() {
-		// TODO - implement appointment.getAttribute
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * 
-	 * @param attribute
-	 */
-	public void setAttribute(int attribute) {
-		// TODO - implement appointment.setAttribute
-		throw new UnsupportedOperationException();
-	}
-
 }

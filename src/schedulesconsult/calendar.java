@@ -175,11 +175,7 @@ public class calendar implements Initializable{
                     }   
                 }
                 tbl_Appointments.setItems(appts);
-                
-                
-                
-               
-                
+                            
             }catch(SQLException ex){
                 
             }
@@ -271,6 +267,12 @@ public class calendar implements Initializable{
         textFieldList.add(textField_SaturdayDate);
         textFieldList.add(textField_SundayDate);      
     }
-
+    public void openScheduleAppointmentWindow() throws IOException{
+        Scene newAppointment = new Scene(FXMLLoader.load(getClass().getResource("appointment.fxml")));
+        Stage newAppointmentStage = new Stage();
+        
+        newAppointmentStage.setScene(newAppointment);
+        newAppointmentStage.show();
+    }
     
 }

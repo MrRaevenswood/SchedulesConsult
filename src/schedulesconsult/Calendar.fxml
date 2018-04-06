@@ -11,7 +11,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#openCustomerAdd" prefHeight="409.0" prefWidth="1109.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.calendar">
    <children>
-      <Button fx:id="bt_SchAppt" layoutX="927.0" layoutY="266.0" mnemonicParsing="false" text="Schedule Appointment" />
+      <Button fx:id="bt_SchAppt" layoutX="927.0" layoutY="266.0" mnemonicParsing="false" onAction="#openScheduleAppointmentWindow" text="Schedule Appointment" />
       <Button fx:id="bt_Exit" layoutX="997.0" layoutY="352.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="88.0" text="Exit" />
       <Button fx:id="bt_AddCustomer" layoutX="963.0" layoutY="310.0" mnemonicParsing="false" onAction="#openCustomerAdd" prefHeight="27.0" prefWidth="122.0" text="Add Customer" />
       <Button fx:id="bt_LastWeek" layoutX="210.0" layoutY="111.0" mnemonicParsing="false" text="Last Week" />
