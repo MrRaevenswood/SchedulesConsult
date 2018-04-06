@@ -1,9 +1,22 @@
 package schedulesconsult;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Optional;
+import java.util.function.Predicate;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class appointment {
 
@@ -15,6 +28,7 @@ public class appointment {
 	private String appointmentStart;
 	private String appointmentEnd;
 	private int reminderIncrement;
+        private int customerId; 
         
         @FXML
         private TextField txt_AppointmentTitle;
@@ -50,15 +64,64 @@ public class appointment {
             this.reminderIncrement = reminderIncrement;
         }
         
-        public void createAppointment(){
+        public void createAppointment() throws ClassNotFoundException, SQLException{
+            
             appointment newAppt = new appointment(txt_AppointmentTitle.getText(), txt_AppointmentDescription.getText(),
                 txt_AppointmentLocation.getText(), txt_AppointmentContact.getText(), txt_AppointmentURL.getText(),
                 comBx_StartTime.getSelectionModel().getSelectedItem().toString(), comBx_EndTime.getSelectionModel().getSelectedItem().toString(),
                 15);
             
+            try{
+                Class.forName("com.mysql.jdbc.Driver");
+                
+                Connection dbConn = DriverManager.getConnection(
+                    SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
+                
+                Statement stmt = dbConn.createStatement();
+                
+                String addScheduleQuery = "Insert into appointment (customerId, title, description, location, contact, url, start, end, createDate"
+                        + ", createdBy, lastUpdate, lastUpdateBy, userId) values (" + SchedulesConsult.currentLogIn + " , " ;
+            }
+            
+            
+            
             
         }
-
+        
+        public int getCustomerId(){
+            return this.customerId;
+        }
+        
+        public void setCustomerId(appointment appt, Connection dbConn) throws SQLException, ClassNotFoundException, IOException{
+            try{
+                
+                Scene newCustomer = new Scene(FXMLLoader.load(getClass().getResource("customerRecords.fxml")));
+                Stage newCustomerStage = new Stage();
+                newCustomerStage.setScene(newCustomer);
+                
+                Statement stmt = dbConn.createStatement();
+                String customerIdQuery = "Select customerId as customerName From customer Where lower(customerName) = '" +
+                        appt.getAppointmentContact().toLowerCase() + "'";
+                
+                ResultSet customerExists = stmt.executeQuery(customerIdQuery);
+                
+                
+                
+                if(!customerExists.next()){
+                    Alert customerDoesNotExist = new Alert(Alert.AlertType.CONFIRMATION);
+                    customerDoesNotExist.setTitle("Customer does not exist in database");
+                    customerDoesNotExist.setHeaderText("Customer Not Found");
+                    customerDoesNotExist.setContentText("Customer was not found.");
+                    Optional<ButtonType> result;
+                    
+                    customerDoesNotExist.showAndWait()
+                            .filter(response -> response == ButtonType.OK)
+                            .ifPresent(showCustomerAddStage -> showCustomerAddStage = true);
+                    
+                }
+            }
+        }
+        
 	public String getAppointmentTitle() {
 		return this.appointmentTitle;
 	}
