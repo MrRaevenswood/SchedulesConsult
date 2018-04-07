@@ -1,15 +1,22 @@
 package schedulesconsult;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Optional;
-import java.util.function.Predicate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -18,7 +25,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-public class appointment {
+public class appointment implements Initializable {
 
 	private String appointmentTitle;
 	private String appointmentDescription;
@@ -44,13 +51,14 @@ public class appointment {
         @FXML
         private ComboBox comBx_StartTime;
         @FXML
-        private ComboBox comBx_EndTime;
+        private ComboBox comBx_endTime;
         
         @FXML
         private Button bt_ScheduleAppointment;
         @FXML
         private Button bt_Cancel;
         
+        public appointment(){}
         
         public appointment(String title, String description, String location, String contact,
                 String url, String start, String end, int reminderIncrement){
@@ -64,23 +72,40 @@ public class appointment {
             this.reminderIncrement = reminderIncrement;
         }
         
-        public void createAppointment() throws ClassNotFoundException, SQLException{
+        public void createAppointment() throws ClassNotFoundException, SQLException, IOException{
             
             appointment newAppt = new appointment(txt_AppointmentTitle.getText(), txt_AppointmentDescription.getText(),
                 txt_AppointmentLocation.getText(), txt_AppointmentContact.getText(), txt_AppointmentURL.getText(),
-                comBx_StartTime.getSelectionModel().getSelectedItem().toString(), comBx_EndTime.getSelectionModel().getSelectedItem().toString(),
+                comBx_StartTime.getSelectionModel().getSelectedItem().toString(), comBx_endTime.getSelectionModel().getSelectedItem().toString(),
                 15);
             
+            LocalDateTime currentTime = LocalDateTime.now();
+
             try{
                 Class.forName("com.mysql.jdbc.Driver");
                 
                 Connection dbConn = DriverManager.getConnection(
                     SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
                 
+                newAppt.setCustomerId(newAppt, dbConn);
+                
                 Statement stmt = dbConn.createStatement();
                 
+                addNewUser newUser = new addNewUser();
+                
                 String addScheduleQuery = "Insert into appointment (customerId, title, description, location, contact, url, start, end, createDate"
-                        + ", createdBy, lastUpdate, lastUpdateBy, userId) values (" + SchedulesConsult.currentLogIn + " , " ;
+                        + ", createdBy, lastUpdate, lastUpdateBy, userId) values (" + newAppt.customerId + " , " + "'" + newAppt.getAppointmentTitle()
+                        + "','" + newAppt.getAppointmentDescription() + "','" + newAppt.getAppointmentLocation() + "','" + newAppt.getAppointmentContact() 
+                        + "','" + newAppt.getAppointmentUrl() + "','" 
+                        + newAppt.appointmentStart + "','" + newAppt.appointmentEnd + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" 
+                        + currentTime + "','" + SchedulesConsult.currentLogIn + "'," + newUser.getUserIdByName(SchedulesConsult.currentLogIn) + ")" ;
+                
+                stmt.executeUpdate(addScheduleQuery);
+                
+            }catch(SQLException ex){ 
+                
+                Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+                return;
             }
             
             
@@ -105,20 +130,29 @@ public class appointment {
                 
                 ResultSet customerExists = stmt.executeQuery(customerIdQuery);
                 
-                
-                
                 if(!customerExists.next()){
                     Alert customerDoesNotExist = new Alert(Alert.AlertType.CONFIRMATION);
                     customerDoesNotExist.setTitle("Customer does not exist in database");
                     customerDoesNotExist.setHeaderText("Customer Not Found");
                     customerDoesNotExist.setContentText("Customer was not found.");
-                    Optional<ButtonType> result;
                     
                     customerDoesNotExist.showAndWait()
                             .filter(response -> response == ButtonType.OK)
-                            .ifPresent(showCustomerAddStage -> showCustomerAddStage = true);
+                            .ifPresent(showCustomerAddStage -> newCustomerStage.showAndWait());
                     
+                }else{
+                   String maxCustomerIDQuery = "Select Max(customerId) + 1 From customer";
+                   ResultSet maxCustomerId = stmt.executeQuery(maxCustomerIDQuery);
+                   if(maxCustomerId.next()){
+                       appt.customerId = maxCustomerId.getInt(1);
+                   }else{
+                       appt.customerId = 1;
+                   }
                 }
+            }catch(SQLException ex){
+                
+                Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+                return;
             }
         }
         
@@ -185,4 +219,21 @@ public class appointment {
 	public void setReminderIncrement(int reminderIncrement) {
 		this.reminderIncrement = reminderIncrement;
 	}
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        ObservableList<String> time = FXCollections.observableArrayList();;
+        time.addAll(Arrays.asList("1:00","2:00","3:00","4:00","5:00","6:00",
+                "7:00","8:00","9:00","10:00","11:00","12:00","13:00","14:00","15:00",
+                "16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"));
+       
+        comBx_StartTime.setItems(time);
+        comBx_endTime.setItems(time);
+    }
+    
+    public void close(){
+        Stage stage = (Stage) bt_Cancel.getScene().getWindow();
+        stage.close();
+    }
+
 }

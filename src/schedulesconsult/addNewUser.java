@@ -5,21 +5,15 @@
  */
 package schedulesconsult;
 
-import java.io.IOException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
@@ -109,6 +103,28 @@ public class addNewUser {
         
         
         close();
+    }
+    
+    public int getUserIdByName (String name) throws ClassNotFoundException, SQLException{
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            
+            Connection dbConn = DriverManager.getConnection(
+                SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
+            
+            Statement stmt = dbConn.createStatement();
+            String userMatchQuery = "Select userId from user where lower(userName) = '" + name.toLowerCase() + "'";
+            
+            ResultSet userMatched = stmt.executeQuery(userMatchQuery);
+            
+            if(userMatched.next()){
+                return userMatched.getInt(1);
+            }
+            
+        }catch(SQLException ex){
+            Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return 0;
     }
     
     public void close(){
