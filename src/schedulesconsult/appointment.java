@@ -22,6 +22,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -54,6 +55,9 @@ public class appointment implements Initializable {
         private ComboBox comBx_endTime;
         
         @FXML
+        private DatePicker datePick_AppointmentDate;
+        
+        @FXML
         private Button bt_ScheduleAppointment;
         @FXML
         private Button bt_Cancel;
@@ -76,7 +80,8 @@ public class appointment implements Initializable {
             
             appointment newAppt = new appointment(txt_AppointmentTitle.getText(), txt_AppointmentDescription.getText(),
                 txt_AppointmentLocation.getText(), txt_AppointmentContact.getText(), txt_AppointmentURL.getText(),
-                comBx_StartTime.getSelectionModel().getSelectedItem().toString(), comBx_endTime.getSelectionModel().getSelectedItem().toString(),
+                datePick_AppointmentDate.getValue() + " " + comBx_StartTime.getSelectionModel().getSelectedItem().toString(), 
+                datePick_AppointmentDate.getValue() + " " + comBx_endTime.getSelectionModel().getSelectedItem().toString(),
                 15);
             
             LocalDateTime currentTime = LocalDateTime.now();
@@ -93,8 +98,10 @@ public class appointment implements Initializable {
                 
                 addNewUser newUser = new addNewUser();
                 
+                System.out.println(newAppt.customerId);
+                
                 String addScheduleQuery = "Insert into appointment (customerId, title, description, location, contact, url, start, end, createDate"
-                        + ", createdBy, lastUpdate, lastUpdateBy, userId) values (" + newAppt.customerId + " , " + "'" + newAppt.getAppointmentTitle()
+                        + ", createdBy, lastUpdate, lastUpdateBy, userId) values (" + 1 + " , " + "'" + newAppt.getAppointmentTitle()
                         + "','" + newAppt.getAppointmentDescription() + "','" + newAppt.getAppointmentLocation() + "','" + newAppt.getAppointmentContact() 
                         + "','" + newAppt.getAppointmentUrl() + "','" 
                         + newAppt.appointmentStart + "','" + newAppt.appointmentEnd + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" 
@@ -106,11 +113,7 @@ public class appointment implements Initializable {
                 
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
                 return;
-            }
-            
-            
-            
-            
+            }   
         }
         
         public int getCustomerId(){
@@ -141,12 +144,10 @@ public class appointment implements Initializable {
                             .ifPresent(showCustomerAddStage -> newCustomerStage.showAndWait());
                     
                 }else{
-                   String maxCustomerIDQuery = "Select Max(customerId) + 1 From customer";
+                   String maxCustomerIDQuery = "Select Max(customerId) From customer";
                    ResultSet maxCustomerId = stmt.executeQuery(maxCustomerIDQuery);
                    if(maxCustomerId.next()){
                        appt.customerId = maxCustomerId.getInt(1);
-                   }else{
-                       appt.customerId = 1;
                    }
                 }
             }catch(SQLException ex){
@@ -223,9 +224,9 @@ public class appointment implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ObservableList<String> time = FXCollections.observableArrayList();;
-        time.addAll(Arrays.asList("1:00","2:00","3:00","4:00","5:00","6:00",
-                "7:00","8:00","9:00","10:00","11:00","12:00","13:00","14:00","15:00",
-                "16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"));
+        time.addAll(Arrays.asList("1:00:00","2:00:00","3:00:00","4:00:00","5:00:00","6:00:00",
+                "7:00:00","8:00:00","9:00:00","10:00:00","11:00:00","12:00:00","13:00:00","14:00:00","15:00:00",
+                "16:00:00","17:00:00","18:00:00","19:00:00","20:00:00","21:00:00","22:00:00","23:00:00"));
        
         comBx_StartTime.setItems(time);
         comBx_endTime.setItems(time);
