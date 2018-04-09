@@ -8,10 +8,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -33,8 +41,8 @@ public class appointment implements Initializable {
 	private String appointmentLocation;
 	private String appointmentContact;
 	private String appointmentUrl;
-	private String appointmentStart;
-	private String appointmentEnd;
+	private LocalDateTime appointmentStart;
+	private LocalDateTime appointmentEnd;
 	private int reminderIncrement;
         private int customerId; 
         
@@ -62,10 +70,17 @@ public class appointment implements Initializable {
         @FXML
         private Button bt_Cancel;
         
+        BiConsumer<String,String> alertPop = (t,c) -> {
+                   Alert newAlert = new Alert(Alert.AlertType.ERROR);
+                   newAlert.setTitle(t);
+                   newAlert.setContentText(c);
+                   newAlert.showAndWait();
+               };
+        
         public appointment(){}
         
         public appointment(String title, String description, String location, String contact,
-                String url, String start, String end, int reminderIncrement){
+                String url, LocalDateTime start, LocalDateTime end, int reminderIncrement){
             this.appointmentTitle = title;
             this.appointmentDescription = description;
             this.appointmentLocation = location;
@@ -80,11 +95,13 @@ public class appointment implements Initializable {
             
             appointment newAppt = new appointment(txt_AppointmentTitle.getText(), txt_AppointmentDescription.getText(),
                 txt_AppointmentLocation.getText(), txt_AppointmentContact.getText(), txt_AppointmentURL.getText(),
-                datePick_AppointmentDate.getValue() + " " + comBx_StartTime.getSelectionModel().getSelectedItem().toString(), 
-                datePick_AppointmentDate.getValue() + " " + comBx_endTime.getSelectionModel().getSelectedItem().toString(),
+                LocalDateTime.parse(datePick_AppointmentDate.getValue() + " " + comBx_StartTime.getSelectionModel().getSelectedItem().toString()), 
+                LocalDateTime.parse(datePick_AppointmentDate.getValue() + " " + comBx_endTime.getSelectionModel().getSelectedItem().toString()),
                 15);
             
             LocalDateTime currentTime = LocalDateTime.now();
+            LocalTime businessStart = LocalTime.of(8, 0);
+            LocalTime businessEnd = LocalTime.of(17 , 0);
 
             try{
                 Class.forName("com.mysql.jdbc.Driver");
@@ -92,22 +109,46 @@ public class appointment implements Initializable {
                 Connection dbConn = DriverManager.getConnection(
                     SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
                 
-                newAppt.setCustomerId(newAppt, dbConn);
+               newAppt.setCustomerId(newAppt, dbConn);
                 
-                Statement stmt = dbConn.createStatement();
+               Statement stmt = dbConn.createStatement();
                 
-                addNewUser newUser = new addNewUser();
-                
-                System.out.println(newAppt.customerId);
-                
+               addNewUser newUser = new addNewUser();
+               
+               BiPredicate<LocalDateTime,LocalDateTime> checkApptStartEnd = (s,e) -> s.isAfter(e);
+               BiPredicate<LocalDateTime,LocalDateTime> checkApptAfterHours = (s,e) -> s.toLocalTime().isBefore(businessStart) ||
+                       e.toLocalTime().isAfter(businessEnd);
+               
+               
+               boolean isStartAfterEnd = checkApptStartEnd.test(newAppt.appointmentStart, newAppt.appointmentEnd);
+               boolean isAfterHours = checkApptAfterHours.test(newAppt.appointmentStart, newAppt.appointmentEnd);
+               
+               if(isStartAfterEnd == true) {
+                  alertPop.accept("Start Time Is After End Time", "Please select a time that is before the end time");
+                  return;
+               }else if (isAfterHours == true) {
+                  alertPop.accept("After Hours Selected", "Either your start, end, or both times are after or normal business hours of 8 am - 5 pm");
+                  return;
+               }
+
                 String addScheduleQuery = "Insert into appointment (customerId, title, description, location, contact, url, start, end, createDate"
                         + ", createdBy, lastUpdate, lastUpdateBy, userId) values (" + 1 + " , " + "'" + newAppt.getAppointmentTitle()
                         + "','" + newAppt.getAppointmentDescription() + "','" + newAppt.getAppointmentLocation() + "','" + newAppt.getAppointmentContact() 
                         + "','" + newAppt.getAppointmentUrl() + "','" 
                         + newAppt.appointmentStart + "','" + newAppt.appointmentEnd + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" 
                         + currentTime + "','" + SchedulesConsult.currentLogIn + "'," + newUser.getUserIdByName(SchedulesConsult.currentLogIn) + ")" ;
+               
+                newAppt.appointmentStart.isAfter(newAppt.appointmentEnd);
                 
-                stmt.executeUpdate(addScheduleQuery);
+                Consumer<String> insertAppointment = s -> {
+                    try {
+                        stmt.executeUpdate(s);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(appointment.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                };
+
+                insertAppointment.accept(addScheduleQuery);
                 
             }catch(SQLException ex){ 
                 
@@ -123,10 +164,6 @@ public class appointment implements Initializable {
         public void setCustomerId(appointment appt, Connection dbConn) throws SQLException, ClassNotFoundException, IOException{
             try{
                 
-                Scene newCustomer = new Scene(FXMLLoader.load(getClass().getResource("customerRecords.fxml")));
-                Stage newCustomerStage = new Stage();
-                newCustomerStage.setScene(newCustomer);
-                
                 Statement stmt = dbConn.createStatement();
                 String customerIdQuery = "Select customerId as customerName From customer Where lower(customerName) = '" +
                         appt.getAppointmentContact().toLowerCase() + "'";
@@ -134,17 +171,11 @@ public class appointment implements Initializable {
                 ResultSet customerExists = stmt.executeQuery(customerIdQuery);
                 
                 if(!customerExists.next()){
-                    Alert customerDoesNotExist = new Alert(Alert.AlertType.CONFIRMATION);
-                    customerDoesNotExist.setTitle("Customer does not exist in database");
-                    customerDoesNotExist.setHeaderText("Customer Not Found");
-                    customerDoesNotExist.setContentText("Customer was not found.");
                     
-                    customerDoesNotExist.showAndWait()
-                            .filter(response -> response == ButtonType.OK)
-                            .ifPresent(showCustomerAddStage -> newCustomerStage.showAndWait());
+                    alertPop.accept("Customer does not exist in database","Customer was not found.");
                     
                 }else{
-                   String maxCustomerIDQuery = "Select Max(customerId) From customer";
+                   String maxCustomerIDQuery = "Select customerId From customer";
                    ResultSet maxCustomerId = stmt.executeQuery(maxCustomerIDQuery);
                    if(maxCustomerId.next()){
                        appt.customerId = maxCustomerId.getInt(1);
@@ -154,6 +185,17 @@ public class appointment implements Initializable {
                 
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
                 return;
+            }
+        }
+        
+        public boolean isAppointmentOverlapping(Connection dbConn, LocalDateTime start, LocalDateTime end){
+            ArrayList<LocalDateTime> allApptsForUser = new ArrayList<>();
+            
+            try{
+                Statement stmt = dbConn.createStatement();
+                String allApptsQuery = "Select appointmentId,";
+            }catch(SQLException ex){
+                Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
@@ -197,19 +239,19 @@ public class appointment implements Initializable {
 		this.appointmentUrl = appointmentUrl;
 	}
 
-	public String getAppointmentStart() {
+	public LocalDateTime getAppointmentStart() {
 		return this.appointmentStart;
 	}
 
-	public void setAppointmentStart(String appointmentStart) {
+	public void setAppointmentStart(LocalDateTime appointmentStart) {
 		this.appointmentStart = appointmentStart;
 	}
 
-	public String getAppointmentEnd() {
+	public LocalDateTime getAppointmentEnd() {
 		return this.appointmentEnd;
 	}
 
-	public void setAppointmentEnd(String appointmentEnd) {
+	public void setAppointmentEnd(LocalDateTime appointmentEnd) {
 		this.appointmentEnd = appointmentEnd;
 	}
 
