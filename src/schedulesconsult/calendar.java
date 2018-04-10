@@ -175,7 +175,7 @@ public class calendar implements Initializable{
                 ResultSet apptThisWeek = stmt.executeQuery(apptThisWeekQuery);
                 ObservableList<ObservableList> appts = FXCollections.observableArrayList();
                 
-                while(!apptThisWeek.next()){
+                while(apptThisWeek.next()){
                     ObservableList<String> row = FXCollections.observableArrayList();
                     for(int i = 1; i <= apptThisWeek.getMetaData().getColumnCount(); i++){
                         row.add(apptThisWeek.getString(i));
@@ -183,7 +183,11 @@ public class calendar implements Initializable{
                     appts.add(row);
                     
                 }
-              
+                //Break up each line in order to display correctly
+                for(ObservableList<String> a : appts){
+                    
+                }
+                
                 col_Time.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {

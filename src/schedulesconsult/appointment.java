@@ -294,7 +294,11 @@ public class appointment implements Initializable {
 	public void setReminderIncrement(int reminderIncrement) {
 		this.reminderIncrement = reminderIncrement;
 	}
-
+    
+    public class AppointmentsThisWeek{
+        
+    }    
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ObservableList<String> time = FXCollections.observableArrayList();;
