@@ -25,6 +25,8 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -32,9 +34,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableRow;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class calendar implements Initializable{
     
@@ -68,6 +73,8 @@ public class calendar implements Initializable{
         
         @FXML
         private TableView tbl_Appointments;
+        @FXML
+        private TableColumn col_Time;
         @FXML
         private TableColumn col_Monday;
         @FXML
@@ -114,7 +121,7 @@ public class calendar implements Initializable{
         public void populateAppointmentTable(LocalDate selectedDate) throws ClassNotFoundException{
             int year = selectedDate.getYear();
             Month month = selectedDate.getMonth();
-            int currentUserId = 0;
+            int currentUserId = 1;
             
             try{
                 Class.forName("com.mysql.jdbc.Driver");
@@ -131,7 +138,7 @@ public class calendar implements Initializable{
                     "        THEN  'X' " +
                     "        ELSE null" +
                     "	END As 'Monday Appointments'," +
-                    "    CASE\n" +
+                    "    CASE" +
                     "		WHEN dayname(start) = 'Tuesday'" +
                     "        THEN 'X'" +
                     "        ELSE null" +
@@ -161,23 +168,83 @@ public class calendar implements Initializable{
                     "        THEN 'X'" +
                     "        ELSE null" +
                     "	END As 'Sunday Appointments'" +
-                    "From appointment" +
-                    "Where userid = "+ currentUserId +" AND ( Year(start) = '" + year + "' AND Month(start) = '"+ 
-                        month.toString() +"' AND day(start) Between "+ weeklyDates.get(0) + " AND " 
+                    " From appointment" +
+                    " Where userid = "+ currentUserId +" AND ( Year(start) = " + year + " AND lower(monthname(start)) = '"+ 
+                        month.toString().toLowerCase() +"' AND day(start) BETWEEN "+ weeklyDates.get(0) + " AND " 
                         + weeklyDates.get(weeklyDates.size() - 1) + ")";
-                
                 ResultSet apptThisWeek = stmt.executeQuery(apptThisWeekQuery);
-                ObservableList<String> appts = FXCollections.observableArrayList();
+                ObservableList<ObservableList> appts = FXCollections.observableArrayList();
                 
-                while(apptThisWeek.next()){
+                while(!apptThisWeek.next()){
+                    ObservableList<String> row = FXCollections.observableArrayList();
                     for(int i = 1; i <= apptThisWeek.getMetaData().getColumnCount(); i++){
-                        appts.add(apptThisWeek.getString(i));
-                    }   
+                        row.add(apptThisWeek.getString(i));
+                    }
+                    appts.add(row);
+                    
                 }
+              
+                col_Time.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(0).toString());
+                    }
+                });
+                
+                col_Monday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(1).toString());
+                    }
+                });
+                
+                
+                col_Tuesday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(2).toString());
+                    }
+                });
+                
+                col_Wednesday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(3).toString());
+                    }
+                });
+                
+                col_Thursday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(4).toString());
+                    }
+                });
+                
+                col_Friday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(5).toString());
+                    }
+                });
+                
+                col_Saturday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(6).toString());
+                    }
+                });
+                
+                col_Sunday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                    @Override
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(7).toString());
+                    }
+                });
                 tbl_Appointments.setItems(appts);
+
                             
             }catch(SQLException ex){
-                
+                Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
             }
             
             
@@ -265,7 +332,9 @@ public class calendar implements Initializable{
         textFieldList.add(textField_ThursdayDate);
         textFieldList.add(textField_FridayDate);
         textFieldList.add(textField_SaturdayDate);
-        textFieldList.add(textField_SundayDate);      
+        textFieldList.add(textField_SundayDate);
+        
+        
     }
     public void openScheduleAppointmentWindow() throws IOException{
         Scene newAppointment = new Scene(FXMLLoader.load(getClass().getResource("appointment.fxml")));

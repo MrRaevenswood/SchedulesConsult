@@ -1,5 +1,6 @@
 package schedulesconsult;
 
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
@@ -9,8 +10,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -93,10 +96,12 @@ public class appointment implements Initializable {
         
         public void createAppointment() throws ClassNotFoundException, SQLException, IOException{
             
+            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            
             appointment newAppt = new appointment(txt_AppointmentTitle.getText(), txt_AppointmentDescription.getText(),
                 txt_AppointmentLocation.getText(), txt_AppointmentContact.getText(), txt_AppointmentURL.getText(),
-                LocalDateTime.parse(datePick_AppointmentDate.getValue() + " " + comBx_StartTime.getSelectionModel().getSelectedItem().toString()), 
-                LocalDateTime.parse(datePick_AppointmentDate.getValue() + " " + comBx_endTime.getSelectionModel().getSelectedItem().toString()),
+                LocalDateTime.parse(datePick_AppointmentDate.getValue() + " " + comBx_StartTime.getSelectionModel().getSelectedItem().toString(), dateFormat), 
+                LocalDateTime.parse(datePick_AppointmentDate.getValue() + " " + comBx_endTime.getSelectionModel().getSelectedItem().toString(), dateFormat),
                 15);
             
             LocalDateTime currentTime = LocalDateTime.now();
@@ -138,7 +143,10 @@ public class appointment implements Initializable {
                         + newAppt.appointmentStart + "','" + newAppt.appointmentEnd + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" 
                         + currentTime + "','" + SchedulesConsult.currentLogIn + "'," + newUser.getUserIdByName(SchedulesConsult.currentLogIn) + ")" ;
                
-                newAppt.appointmentStart.isAfter(newAppt.appointmentEnd);
+                if(newAppt.isAppointmentOverlapping(dbConn, newAppt.appointmentStart, newAppt.appointmentEnd)){
+                    alertPop.accept("Appointment Overlap Detected", "Please Select A New Start/End Time for your request.");
+                    return;
+                }
                 
                 Consumer<String> insertAppointment = s -> {
                     try {
@@ -154,7 +162,9 @@ public class appointment implements Initializable {
                 
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
                 return;
-            }   
+            } 
+            
+            close();
         }
         
         public int getCustomerId(){
@@ -188,15 +198,37 @@ public class appointment implements Initializable {
             }
         }
         
-        public boolean isAppointmentOverlapping(Connection dbConn, LocalDateTime start, LocalDateTime end){
-            ArrayList<LocalDateTime> allApptsForUser = new ArrayList<>();
+        public boolean isAppointmentOverlapping(Connection dbConn, LocalDateTime start, LocalDateTime end) throws ClassNotFoundException{
+            int startTime = start.getHour();
+            int endTime = end.getHour();
+            
+            
+            addNewUser currentUser = new addNewUser();
             
             try{
                 Statement stmt = dbConn.createStatement();
-                String allApptsQuery = "Select appointmentId,";
+                String allApptsQuery = "Select appointmentId, Hour(start), Hour(end) From appointment where userId = " + currentUser.getUserIdByName(SchedulesConsult.currentLogIn)
+                        + " AND (Year(start) = " + start.getYear() + " AND Month(start) = " + start.getMonthValue() + " AND Day(start) = " + start.getDayOfMonth() + " )";
+                
+                ResultSet allAppts = stmt.executeQuery(allApptsQuery);
+                
+                while(allAppts.next()){
+                   if (allAppts.getInt(2) <= startTime && allAppts.getInt(3) >= startTime){
+                       alertPop.accept("Invalid StartTime Choosen", "Please try a start time that is not within range of a current appointment");
+                       return true;
+                   }
+                   
+                   if(allAppts.getInt(2) <= endTime && allAppts.getInt(3) >= endTime){
+                       alertPop.accept("Invalid EndTime Choosen", "Please try an end time that is not within range of a current appointment");
+                       return true;
+                   }
+                }
+                
             }catch(SQLException ex){
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
+            return false;
         }
         
 	public String getAppointmentTitle() {
@@ -266,9 +298,9 @@ public class appointment implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ObservableList<String> time = FXCollections.observableArrayList();;
-        time.addAll(Arrays.asList("1:00:00","2:00:00","3:00:00","4:00:00","5:00:00","6:00:00",
-                "7:00:00","8:00:00","9:00:00","10:00:00","11:00:00","12:00:00","13:00:00","14:00:00","15:00:00",
-                "16:00:00","17:00:00","18:00:00","19:00:00","20:00:00","21:00:00","22:00:00","23:00:00"));
+        time.addAll(Arrays.asList("01:00","02:00","03:00","04:00","05:00","06:00",
+                "07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00",
+                "16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"));
        
         comBx_StartTime.setItems(time);
         comBx_endTime.setItems(time);
