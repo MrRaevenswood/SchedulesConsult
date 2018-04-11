@@ -173,19 +173,17 @@ public class calendar implements Initializable{
                         month.toString().toLowerCase() +"' AND day(start) BETWEEN "+ weeklyDates.get(0) + " AND " 
                         + weeklyDates.get(weeklyDates.size() - 1) + ")";
                 ResultSet apptThisWeek = stmt.executeQuery(apptThisWeekQuery);
-                ObservableList<String> appts = FXCollections.observableArrayList();
+                ObservableList<ObservableList<String>> appts = FXCollections.observableArrayList();
                 
                 while(apptThisWeek.next()){
-                    
-                    appts.add(apptThisWeek.getString("Time"));
-                    appts.add(apptThisWeek.getString("Monday Appointments"));
-                    appts.add(apptThisWeek.getString("Tuesday Appointments"));
-                    appts.add(apptThisWeek.getString("Wednesday Appointments"));
-                    appts.add(apptThisWeek.getString("Thursday Appointments"));
-                    appts.add(apptThisWeek.getString("Friday Appointments"));
-                    appts.add(apptThisWeek.getString("Saturday Appointments"));
-                    appts.add(apptThisWeek.getString("Sunday Appointments"));
+                    ObservableList<String> apptsForEachDay = FXCollections.observableArrayList();
+
+                    for(int i = 1; i <= apptThisWeek.getMetaData().getColumnCount(); i++){
+                        apptsForEachDay.add(apptThisWeek.getString(i));
+                    }
+                    appts.add(apptsForEachDay);
                 }
+               
                 
                 col_Time.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
@@ -197,49 +195,49 @@ public class calendar implements Initializable{
                 col_Monday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(0).toString());
+                        return new SimpleStringProperty(p.getValue().get(1).toString());
                     }
                 });
                 
                 col_Tuesday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(0).toString());
+                        return new SimpleStringProperty(p.getValue().get(2).toString());
                     }
                 });
                 
                 col_Wednesday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(0).toString());
+                        return new SimpleStringProperty(p.getValue().get(3).toString());
                     }
                 });
                 
                 col_Thursday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(0).toString());
+                        return new SimpleStringProperty(p.getValue().get(4).toString());
                     }
                 });
                 
                 col_Friday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(0).toString());
+                        return new SimpleStringProperty(p.getValue().get(5).toString());
                     }
                 });
                 
                 col_Saturday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(0).toString());
+                        return new SimpleStringProperty(p.getValue().get(6).toString());
                     }
                 });
                 
                 col_Sunday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
                     public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(0).toString());
+                        return new SimpleStringProperty(p.getValue().get(7).toString());
                     }
                 });
                 
