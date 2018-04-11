@@ -58,10 +58,12 @@ public class customerRecords {
          
         LocalDateTime currentTime = LocalDateTime.now();
         
+        Connection dbConn = null;
+        
         try{
             
             Class.forName("com.mysql.jdbc.Driver");
-            Connection dbConn =  DriverManager.getConnection(
+            dbConn =  DriverManager.getConnection(
             SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
             Statement stmt = dbConn.createStatement();
             
@@ -132,6 +134,12 @@ public class customerRecords {
             
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
             return;
+        }finally{
+            try {
+                dbConn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(customerRecords.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     

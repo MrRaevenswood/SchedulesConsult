@@ -107,11 +107,13 @@ public class appointment implements Initializable {
             LocalDateTime currentTime = LocalDateTime.now();
             LocalTime businessStart = LocalTime.of(8, 0);
             LocalTime businessEnd = LocalTime.of(17 , 0);
+            
+            Connection dbConn = null;
 
             try{
                 Class.forName("com.mysql.jdbc.Driver");
                 
-                Connection dbConn = DriverManager.getConnection(
+                dbConn = DriverManager.getConnection(
                     SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
                 
                newAppt.setCustomerId(newAppt, dbConn);
@@ -162,7 +164,9 @@ public class appointment implements Initializable {
                 
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
                 return;
-            } 
+            }finally{
+                dbConn.close();
+            }
             
             close();
         }
@@ -195,6 +199,8 @@ public class appointment implements Initializable {
                 
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
                 return;
+            }finally{
+                dbConn.close();
             }
         }
         
@@ -226,6 +232,12 @@ public class appointment implements Initializable {
                 
             }catch(SQLException ex){
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+            }finally{
+                try {
+                    dbConn.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(appointment.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             
             return false;

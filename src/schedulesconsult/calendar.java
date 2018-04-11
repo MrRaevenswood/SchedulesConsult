@@ -123,10 +123,12 @@ public class calendar implements Initializable{
             Month month = selectedDate.getMonth();
             int currentUserId = 1;
             
+            Connection dbConn = null;
+            
             try{
                 Class.forName("com.mysql.jdbc.Driver");
                 
-                Connection dbConn =  DriverManager.getConnection(
+                dbConn =  DriverManager.getConnection(
                     SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
 
                 Statement stmt = dbConn.createStatement();
@@ -246,6 +248,12 @@ public class calendar implements Initializable{
                             
             }catch(SQLException ex){
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+            }finally{
+                try {
+                    dbConn.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(calendar.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             
             

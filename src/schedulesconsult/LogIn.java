@@ -55,14 +55,14 @@ public class LogIn {
             if(rb_EnglishLogIn.isSelected()){
                 logInLanguage = "English";
             }
-            
+            Connection dbConn = null;
             newLogin.setLanguage(logInLanguage);
             //figure out translation later
             try {
                 
                 Class.forName("com.mysql.jdbc.Driver");
                 
-                Connection dbConn =  DriverManager.getConnection(
+                 dbConn =  DriverManager.getConnection(
                     SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
 
                 Statement stmt = dbConn.createStatement();
@@ -116,8 +116,14 @@ public class LogIn {
                 }
                 
                 sqlException.showAndWait();
-               
+                
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+            }finally{
+                try {
+                    dbConn.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
         
