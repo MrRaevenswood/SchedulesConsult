@@ -106,10 +106,22 @@ public class calendar implements Initializable{
             DayOfWeek day = selectedDate.getDayOfWeek();
             int dayOfMonth = selectedDate.getDayOfMonth();
             int firstDateOfWeek = dayOfMonth - (day.getValue() - 1);
-            //Add Predicate Stream to fix this issue with end or beginning of months. 
-            weeklyDates.addAll(Arrays.asList(firstDateOfWeek, firstDateOfWeek + 1, 
-                    firstDateOfWeek + 2, firstDateOfWeek + 3, firstDateOfWeek + 3,
-                    firstDateOfWeek + 4, firstDateOfWeek + 5, firstDateOfWeek + 6));
+            int firstDateInRange = 0;
+            
+            Month lastMonth;
+            int lastDayofLastMonth = 0;
+            
+            if(firstDateOfWeek < 1){
+                lastMonth = selectedDate.getMonth().minus(1);              
+                lastDayofLastMonth = lastMonth.maxLength();
+                firstDateInRange = lastDayofLastMonth + firstDateOfWeek;
+                
+                while(firstDateInRange <= lastDayofLastMonth || weeklyDates.size() < 7){
+                    weeklyDates.add(firstDateInRange);
+                    firstDateInRange++;
+                }
+  
+            }
             
             daysOfWeek.stream().forEach(x -> textFieldList.get(x - 1).setText(weeklyDates.get(x - 1).toString())); 
             
