@@ -132,7 +132,7 @@ public class calendar implements Initializable{
                 Statement stmt = dbConn.createStatement();
                 
                 //Use a pivot table and DAYNAME(start) in the Select clause to create the table instead of this mess
-                String apptThisWeekQuery = "Select Hour(start)," +
+                String apptThisWeekQuery = "Select Hour(start) as Time," +
                     "	CASE" +
                     "		WHEN dayname(start) = 'Monday'" +
                     "        THEN  'X' " +
@@ -173,77 +173,76 @@ public class calendar implements Initializable{
                         month.toString().toLowerCase() +"' AND day(start) BETWEEN "+ weeklyDates.get(0) + " AND " 
                         + weeklyDates.get(weeklyDates.size() - 1) + ")";
                 ResultSet apptThisWeek = stmt.executeQuery(apptThisWeekQuery);
-                ObservableList<ObservableList> appts = FXCollections.observableArrayList();
+                ObservableList<String> appts = FXCollections.observableArrayList();
                 
                 while(apptThisWeek.next()){
-                    ObservableList<String> row = FXCollections.observableArrayList();
-                    for(int i = 1; i <= apptThisWeek.getMetaData().getColumnCount(); i++){
-                        row.add(apptThisWeek.getString(i));
-                    }
-                    appts.add(row);
                     
+                    appts.add(apptThisWeek.getString("Time"));
+                    appts.add(apptThisWeek.getString("Monday Appointments"));
+                    appts.add(apptThisWeek.getString("Tuesday Appointments"));
+                    appts.add(apptThisWeek.getString("Wednesday Appointments"));
+                    appts.add(apptThisWeek.getString("Thursday Appointments"));
+                    appts.add(apptThisWeek.getString("Friday Appointments"));
+                    appts.add(apptThisWeek.getString("Saturday Appointments"));
+                    appts.add(apptThisWeek.getString("Sunday Appointments"));
                 }
-                //Break up each line in order to display correctly
-                for(ObservableList<String> a : appts){
-                    
-                }
                 
-                col_Time.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                col_Time.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(0).toString());
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
+                        return new SimpleStringProperty(p.getValue().get(0).toString());
                     }
                 });
                 
-                col_Monday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                col_Monday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
                     @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(1).toString());
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
+                        return new SimpleStringProperty(p.getValue().get(0).toString());
                     }
                 });
                 
-                
-                col_Tuesday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                col_Tuesday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(2).toString());
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
+                        return new SimpleStringProperty(p.getValue().get(0).toString());
                     }
                 });
                 
-                col_Wednesday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                col_Wednesday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(3).toString());
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
+                        return new SimpleStringProperty(p.getValue().get(0).toString());
                     }
                 });
                 
-                col_Thursday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                col_Thursday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(4).toString());
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
+                        return new SimpleStringProperty(p.getValue().get(0).toString());
                     }
                 });
                 
-                col_Friday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                col_Friday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(5).toString());
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
+                        return new SimpleStringProperty(p.getValue().get(0).toString());
                     }
                 });
                 
-                col_Saturday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                col_Saturday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(6).toString());
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
+                        return new SimpleStringProperty(p.getValue().get(0).toString());
                     }
                 });
                 
-                col_Sunday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>() {
+                col_Sunday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
                     @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {
-                        return new SimpleStringProperty(param.getValue().get(7).toString());
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
+                        return new SimpleStringProperty(p.getValue().get(0).toString());
                     }
                 });
+                
                 tbl_Appointments.setItems(appts);
 
                             
