@@ -42,8 +42,8 @@ public class customerRecords {
     private String custCity = "";
     
     
-    public void addCustomerRecord() throws ClassNotFoundException{
-       
+    public void addCustomerRecord() throws ClassNotFoundException, SQLException{
+        
         customerRecords newCustomer = new customerRecords();
         newCustomer.setCustomerAddress(txt_Address.getText());
         newCustomer.setCustomerCity(txt_City.getText());
@@ -57,11 +57,11 @@ public class customerRecords {
         String addressIdQuery = "Select addressId From address Where address = '" + newCustomer.getcustomerAddress() + "'";
          
         LocalDateTime currentTime = LocalDateTime.now();
-        
+        Connection dbConn = null;
         try{
             
             Class.forName("com.mysql.jdbc.Driver");
-            Connection dbConn =  DriverManager.getConnection(
+            dbConn =  DriverManager.getConnection(
             SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
             Statement stmt = dbConn.createStatement();
             
@@ -102,7 +102,7 @@ public class customerRecords {
             }
             
             if(isAddressUnique == true){
-                String addressInsertQuery = "Insert into address (address, cityId, postalCode, phone, createDate, createdBy, lastUpdate, lastUpdatedBy)"
+                String addressInsertQuery = "Insert into address (address, cityId, postalCode, phone, createDate, createdBy, lastUpdate, lastUpdateBy)"
                         + "Values ('" + newCustomer.getcustomerAddress() + "','" + cityId + "','" + txt_PostalCode.getText() + "','" +
                         txt_PhoneNumber.getText() + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" + currentTime + "','" +
                         SchedulesConsult.currentLogIn + "')";
@@ -132,7 +132,11 @@ public class customerRecords {
             
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
             return;
+        }finally{
+            dbConn.close();
         }
+        
+        close();
     }
     
     public String getcustomerAddress(){

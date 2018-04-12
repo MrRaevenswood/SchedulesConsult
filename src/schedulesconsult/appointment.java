@@ -137,7 +137,7 @@ public class appointment implements Initializable {
                }
 
                 String addScheduleQuery = "Insert into appointment (customerId, title, description, location, contact, url, start, end, createDate"
-                        + ", createdBy, lastUpdate, lastUpdateBy, userId) values (" + 1 + " , " + "'" + newAppt.getAppointmentTitle()
+                        + ", createdBy, lastUpdate, lastUpdatedBy, userId) values (" + 1 + " , " + "'" + newAppt.getAppointmentTitle()
                         + "','" + newAppt.getAppointmentDescription() + "','" + newAppt.getAppointmentLocation() + "','" + newAppt.getAppointmentContact() 
                         + "','" + newAppt.getAppointmentUrl() + "','" 
                         + newAppt.appointmentStart + "','" + newAppt.appointmentEnd + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" 
@@ -204,7 +204,6 @@ public class appointment implements Initializable {
             
             
             addNewUser currentUser = new addNewUser();
-            
             try{
                 Statement stmt = dbConn.createStatement();
                 String allApptsQuery = "Select appointmentId, Hour(start), Hour(end) From appointment where userId = " + currentUser.getUserIdByName(SchedulesConsult.currentLogIn)

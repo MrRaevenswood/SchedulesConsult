@@ -74,7 +74,9 @@ public class calendar implements Initializable{
         @FXML
         private TableView tbl_Appointments;
         @FXML
-        private TableColumn col_Time;
+        private TableColumn col_StartTime;
+        @FXML
+        private TableColumn col_EndTime;
         @FXML
         private TableColumn col_Monday;
         @FXML
@@ -100,17 +102,68 @@ public class calendar implements Initializable{
         private final ArrayList<TextField> textFieldList = new ArrayList<>();
         private final List<Integer> daysOfWeek = Arrays.asList(1,2,3,4,5,6,7);
         private LocalDate selectedDate;
-        
+        private ObservableList<AppointmentQueryLabels> data = FXCollections.observableArrayList();
+
         public void calendarWeeklyDatePopulate() throws ClassNotFoundException{
+            
+            tbl_Appointments.refresh();
+            
             selectedDate = datePick_MonthlyDate.getValue();
             DayOfWeek day = selectedDate.getDayOfWeek();
             int dayOfMonth = selectedDate.getDayOfMonth();
             int firstDateOfWeek = dayOfMonth - (day.getValue() - 1);
-            //Add Predicate Stream to fix this issue with end or beginning of months. 
-            weeklyDates.addAll(Arrays.asList(firstDateOfWeek, firstDateOfWeek + 1, 
-                    firstDateOfWeek + 2, firstDateOfWeek + 3, firstDateOfWeek + 3,
-                    firstDateOfWeek + 4, firstDateOfWeek + 5, firstDateOfWeek + 6));
+            int firstDateInRange = 0;
+            int selectedDateNum = selectedDate.getDayOfMonth();
             
+            Month currentMonth = selectedDate.getMonth();
+            Month lastMonth;
+            Month nextMonth;
+            int lastDayofLastMonth = 0;
+            
+            System.out.println(firstDateOfWeek);
+            
+            if(firstDateOfWeek < 1){
+                lastMonth = selectedDate.getMonth().minus(1);              
+                lastDayofLastMonth = lastMonth.maxLength();
+                firstDateInRange = lastDayofLastMonth + firstDateOfWeek;
+                
+                while(weeklyDates.size() < 7){
+                    if(firstDateInRange > lastDayofLastMonth){
+                        firstDateInRange = 1;
+                        weeklyDates.add(firstDateInRange);
+                    }else{
+                        weeklyDates.add(firstDateInRange);
+                    }
+                    
+                    firstDateInRange++;
+                }
+  
+            } else if(firstDateOfWeek > currentMonth.maxLength()){
+                
+                while(weeklyDates.size() < 7){
+                    if(selectedDateNum > currentMonth.maxLength()){
+                        selectedDateNum = 1;
+                        weeklyDates.add(selectedDateNum);
+                    }else{
+                        weeklyDates.add(selectedDateNum);
+                    }
+                    
+                    selectedDateNum++;
+                }
+                
+            } else{
+                
+                while(weeklyDates.size() < 7){
+                    if(firstDateOfWeek > currentMonth.maxLength()){
+                        firstDateOfWeek = 1;
+                        weeklyDates.add(firstDateOfWeek);
+                    }else{
+                        weeklyDates.add(firstDateOfWeek);
+                    }
+                    
+                    firstDateOfWeek++;
+                }
+            }
             daysOfWeek.stream().forEach(x -> textFieldList.get(x - 1).setText(weeklyDates.get(x - 1).toString())); 
             
             populateAppointmentTable(selectedDate);
@@ -122,17 +175,18 @@ public class calendar implements Initializable{
             int year = selectedDate.getYear();
             Month month = selectedDate.getMonth();
             int currentUserId = 1;
+            Connection dbConn = null;
             
             try{
                 Class.forName("com.mysql.jdbc.Driver");
                 
-                Connection dbConn =  DriverManager.getConnection(
+                dbConn =  DriverManager.getConnection(
                     SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
 
                 Statement stmt = dbConn.createStatement();
                 
                 //Use a pivot table and DAYNAME(start) in the Select clause to create the table instead of this mess
-                String apptThisWeekQuery = "Select Hour(start) as Time," +
+                String apptThisWeekQuery = "Select Hour(start) as StartTime, Hour(end) as EndTime," +
                     "	CASE" +
                     "		WHEN dayname(start) = 'Monday'" +
                     "        THEN  'X' " +
@@ -172,80 +226,39 @@ public class calendar implements Initializable{
                     " Where userid = "+ currentUserId +" AND ( Year(start) = " + year + " AND lower(monthname(start)) = '"+ 
                         month.toString().toLowerCase() +"' AND day(start) BETWEEN "+ weeklyDates.get(0) + " AND " 
                         + weeklyDates.get(weeklyDates.size() - 1) + ")";
+
                 ResultSet apptThisWeek = stmt.executeQuery(apptThisWeekQuery);
-                ObservableList<ObservableList<String>> appts = FXCollections.observableArrayList();
-                
-                while(apptThisWeek.next()){
-                    ObservableList<String> apptsForEachDay = FXCollections.observableArrayList();
-
-                    for(int i = 1; i <= apptThisWeek.getMetaData().getColumnCount(); i++){
-                        apptsForEachDay.add(apptThisWeek.getString(i));
-                    }
-                    appts.add(apptsForEachDay);
-                }
                
-                
-                col_Time.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(0).toString());
-                    }
-                });
-                
-                col_Monday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(1).toString());
-                    }
-                });
-                
-                col_Tuesday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(2).toString());
-                    }
-                });
-                
-                col_Wednesday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(3).toString());
-                    }
-                });
-                
-                col_Thursday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(4).toString());
-                    }
-                });
-                
-                col_Friday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(5).toString());
-                    }
-                });
-                
-                col_Saturday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(6).toString());
-                    }
-                });
-                
-                col_Sunday.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>, ObservableValue<String>>(){
-                    @Override
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList,String> p){
-                        return new SimpleStringProperty(p.getValue().get(7).toString());
-                    }
-                });
-                
-                tbl_Appointments.setItems(appts);
+                while(apptThisWeek.next()){
 
+                   
+                   AppointmentQueryLabels appts = new AppointmentQueryLabels();
+                   appts.startTime.set(apptThisWeek.getString(1));
+                   appts.endTime.set(apptThisWeek.getString(2));
+                   appts.monday.set(apptThisWeek.getString(3));
+                   appts.tuesday.set(apptThisWeek.getString(4));
+                   appts.wednesday.set(apptThisWeek.getString(5));
+                   appts.thursday.set(apptThisWeek.getString(6));
+                   appts.friday.set(apptThisWeek.getString(7));
+                   appts.saturday.set(apptThisWeek.getString(8));
+                   appts.sunday.set(apptThisWeek.getString(9));
+                   
+                   data.add(appts);
+ 
+                }
+                
+                tbl_Appointments.setItems(data);
+                              
+                
                             
             }catch(SQLException ex){
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+            }finally{
+                try {
+                    dbConn.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(calendar.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             
             
@@ -336,6 +349,16 @@ public class calendar implements Initializable{
         textFieldList.add(textField_SundayDate);
         
         
+        col_StartTime.setCellValueFactory(new PropertyValueFactory<AppointmentQueryLabels,String>("startTime"));
+        col_EndTime.setCellValueFactory(new PropertyValueFactory<AppointmentQueryLabels,String>("endTime"));
+        col_Monday.setCellValueFactory(new PropertyValueFactory<AppointmentQueryLabels,String>("monday"));
+        col_Tuesday.setCellValueFactory(new PropertyValueFactory<AppointmentQueryLabels,String>("tuesday"));
+        col_Wednesday.setCellValueFactory(new PropertyValueFactory<AppointmentQueryLabels,String>("wednesday"));
+        col_Thursday.setCellValueFactory(new PropertyValueFactory<AppointmentQueryLabels,String>("thursday"));
+        col_Friday.setCellValueFactory(new PropertyValueFactory<AppointmentQueryLabels,String>("friday"));
+        col_Saturday.setCellValueFactory(new PropertyValueFactory<AppointmentQueryLabels,String>("saturday"));
+        col_Sunday.setCellValueFactory(new PropertyValueFactory<AppointmentQueryLabels,String>("sunday"));
+        
     }
     public void openScheduleAppointmentWindow() throws IOException{
         Scene newAppointment = new Scene(FXMLLoader.load(getClass().getResource("appointment.fxml")));
@@ -343,6 +366,55 @@ public class calendar implements Initializable{
         
         newAppointmentStage.setScene(newAppointment);
         newAppointmentStage.show();
+    }
+
+    public static class AppointmentQueryLabels {
+       
+        private SimpleStringProperty startTime = new SimpleStringProperty();
+        private SimpleStringProperty endTime = new SimpleStringProperty();
+        private SimpleStringProperty monday = new SimpleStringProperty();
+        private SimpleStringProperty tuesday = new SimpleStringProperty();
+        private SimpleStringProperty wednesday = new SimpleStringProperty();
+        private SimpleStringProperty thursday = new SimpleStringProperty();
+        private SimpleStringProperty friday = new SimpleStringProperty();
+        private SimpleStringProperty saturday = new SimpleStringProperty();
+        private SimpleStringProperty sunday = new SimpleStringProperty();
+        
+        public String getStartTime(){
+            return startTime.get();
+        }
+        
+        public String getEndTime(){
+            return endTime.get();
+        }
+        
+        public String getMonday(){
+            return monday.get();
+        }
+        
+        public String getTuesday(){
+            return tuesday.get();
+        }
+        
+        public String getWednesday(){
+            return wednesday.get();
+        }
+        
+        public String getThursday(){
+            return thursday.get();
+        }
+        
+        public String getFriday(){
+            return friday.get();
+        }
+        
+        public String getSaturday(){
+            return saturday.get();
+        }
+        
+        public String getSunday(){
+            return sunday.get();
+        }
     }
     
 }

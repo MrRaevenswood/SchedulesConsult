@@ -61,11 +61,11 @@ public class addNewUser {
         newUser.setPassword(txt_Password.getText());
         
         LocalDateTime currentTime = LocalDateTime.now();
-        
+        Connection dbConn = null;
         try{
             Class.forName("com.mysql.jdbc.Driver");
                 
-                Connection dbConn =  DriverManager.getConnection(
+                dbConn =  DriverManager.getConnection(
                     SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
 
                 Statement stmt = dbConn.createStatement();
@@ -99,6 +99,12 @@ public class addNewUser {
             
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
             return;
+        }finally{
+            try {
+                dbConn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(addNewUser.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         
         
@@ -106,10 +112,12 @@ public class addNewUser {
     }
     
     public int getUserIdByName (String name) throws ClassNotFoundException, SQLException{
+        Connection dbConn = null;
+        
         try{
             Class.forName("com.mysql.jdbc.Driver");
             
-            Connection dbConn = DriverManager.getConnection(
+            dbConn = DriverManager.getConnection(
                 SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
             
             Statement stmt = dbConn.createStatement();
@@ -123,6 +131,8 @@ public class addNewUser {
             
         }catch(SQLException ex){
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            dbConn.close();
         }
         return 0;
     }
