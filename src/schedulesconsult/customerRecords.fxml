@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="440.0" prefWidth="566.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.customerRecords">
+   <children>
+      <Label layoutX="168.0" layoutY="53.0" text="Add A Customer Record ">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <TextField fx:id="txt_FullName" layoutX="251.0" layoutY="109.0" />
+      <TextField fx:id="txt_City" layoutX="251.0" layoutY="229.0" />
+      <TextField fx:id="txt_PostalCode" layoutX="251.0" layoutY="264.0" />
+      <TextField fx:id="txt_Country" layoutX="251.0" layoutY="299.0" />
+      <TextArea fx:id="txt_Address" layoutX="251.0" layoutY="143.0" prefHeight="73.0" prefWidth="149.0" />
+      <TextField fx:id="txt_PhoneNumber" layoutX="251.0" layoutY="339.0" />
+      <Label layoutX="170.0" layoutY="113.0" text="Full Name" />
+      <Label layoutX="176.0" layoutY="157.0" text="Address" />
+      <Label layoutX="197.0" layoutY="233.0" text="City" />
+      <Label layoutX="153.0" layoutY="268.0" text="Postal Code" />
+      <Label layoutX="175.0" layoutY="303.0" text="Country" />
+      <Label layoutX="136.0" layoutY="343.0" text="Phone Number" />
+      <Button fx:id="bt_AddCustomer" layoutX="251.0" layoutY="401.0" mnemonicParsing="false" onMouseClicked="#addCustomerRecord" prefHeight="25.0" prefWidth="51.0" text="Add" />
+      <Button fx:id="bt_CancelCustomerAdd" layoutX="348.0" layoutY="401.0" mnemonicParsing="false" onMouseClicked="#close" text="Cancel" />
+   </children>
+</Pane>

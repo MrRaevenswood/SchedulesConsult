@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="454.0" prefWidth="1125.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.calendar">
+   <children>
+      <Button fx:id="bt_SchAppt" layoutX="32.0" layoutY="414.0" mnemonicParsing="false" onAction="#openScheduleAppointmentWindow" text="Schedule Appointment" />
+      <Button fx:id="bt_Exit" layoutX="996.0" layoutY="414.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="88.0" text="Exit" />
+      <Button fx:id="bt_AddCustomer" layoutX="542.0" layoutY="413.0" mnemonicParsing="false" onAction="#openCustomerAdd" prefHeight="27.0" prefWidth="122.0" text="Add Customer" />
+      <Button fx:id="bt_LastWeek" layoutX="689.0" layoutY="39.0" mnemonicParsing="false" text="Last Week" />
+      <Button fx:id="bt_NextWeek" layoutX="687.0" layoutY="92.0" mnemonicParsing="false" text="Next Week" />
+      <DatePicker fx:id="datePick_MonthlyDate" layoutX="917.0" layoutY="78.0" onAction="#calendarWeeklyDatePopulate" />
+      <Label layoutX="210.0" layoutY="25.0" prefHeight="53.0" prefWidth="405.0" text="Appointment Calendar">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <Label layoutX="287.0" layoutY="69.0" prefHeight="29.0" prefWidth="255.0" text="Weekly Calendar View">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="819.0" layoutY="36.0" prefHeight="29.0" prefWidth="292.0" text="Monthly View DatePicker">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <TextField fx:id="textField_SundayDate" layoutX="1008.0" layoutY="144.0" prefHeight="35.0" prefWidth="62.0" />
+      <TextField fx:id="textField_MondayDate" layoutX="214.0" layoutY="144.0" prefHeight="35.0" prefWidth="62.0" />
+      <TextField fx:id="textField_TuesdayDate" layoutX="333.0" layoutY="144.0" prefHeight="35.0" prefWidth="62.0" />
+      <TextField fx:id="textField_WednesdayDate" layoutX="466.0" layoutY="144.0" prefHeight="35.0" prefWidth="62.0" />
+      <TextField fx:id="textField_ThursdayDate" layoutX="584.0" layoutY="144.0" prefHeight="35.0" prefWidth="62.0" />
+      <TextField fx:id="textField_FridayDate" layoutX="730.0" layoutY="144.0" prefHeight="35.0" prefWidth="62.0" />
+      <TextField fx:id="textField_SaturdayDate" layoutX="882.0" layoutY="144.0" prefHeight="35.0" prefWidth="62.0" />
+      <TableView fx:id="tbl_Appointments" layoutX="32.0" layoutY="191.0" prefHeight="200.0" prefWidth="1072.0">
+        <columns>
+            <TableColumn fx:id="col_StartTime" prefWidth="75.0" text="Start" />
+            <TableColumn fx:id="col_EndTime" prefWidth="75.0" text="End" />
+          <TableColumn fx:id="col_Monday" prefWidth="121.0" text="Monday" />
+          <TableColumn fx:id="col_Tuesday" minWidth="0.0" prefWidth="122.0" text="Tuesday" />
+            <TableColumn fx:id="col_Wednesday" prefWidth="139.0" text="Wednesday" />
+            <TableColumn fx:id="col_Thursday" prefWidth="137.0" text="Thursday" />
+            <TableColumn fx:id="col_Friday" prefWidth="132.0" text="Friday" />
+            <TableColumn fx:id="col_Saturday" prefWidth="146.0" text="Saturday" />
+            <TableColumn fx:id="col_Sunday" prefWidth="124.0" text="Sunday" />
+        </columns>
+      </TableView>
+   </children>
+</Pane>
