@@ -101,8 +101,12 @@ public class report{
                 ResultSet rs = stmt.executeQuery(numOfApptsPerMonthQuery);
                 ArrayList<String> apptsTypeReport = new ArrayList<>();
                 
-                if(rs.next()){ 
-                    apptsTypeReport.add(rs.getString(1) + " " + rs.getString(2));
+                txtArea_Results.clear();
+                
+                if(rs.next()){
+                    
+                    apptsTypeReport.add(rs.getString(1) + "               " + rs.getString(2));
+
                     txtArea_Results.setText(apptsTypeReport.get(apptsTypeReport.size() - 1));
                 }
                 
