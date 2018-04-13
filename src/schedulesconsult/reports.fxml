@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="322.0" prefWidth="856.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.report">
+   <children>
+      <Label layoutX="155.0" layoutY="14.0" text="Reports">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Label>
+      <RadioButton fx:id="rb_ApptsPerMonth" layoutX="79.0" layoutY="136.0" mnemonicParsing="false" selected="true" text="Number of Appointments Per Month">
+         <toggleGroup>
+            <ToggleGroup fx:id="reports" />
+         </toggleGroup></RadioButton>
+      <RadioButton fx:id="rb_ApptsByConsultant" layoutX="80.0" layoutY="163.0" mnemonicParsing="false" text="Appointment Schedule By Consultant" toggleGroup="$reports" />
+      <RadioButton fx:id="rb_ApptsByCustomer" layoutX="81.0" layoutY="190.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="219.0" text="Appointment Schedule By Customer" toggleGroup="$reports" />
+      <Label layoutX="23.0" layoutY="78.0" text="Report Type">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Button fx:id="bt_RunReport" layoutX="53.0" layoutY="251.0" mnemonicParsing="false" onAction="#runReports" text="Run Report" />
+      <Button fx:id="bt_Cancel" layoutX="300.0" layoutY="252.0" mnemonicParsing="false" text="Cancel" />
+      <TextArea fx:id="txtArea_Results" layoutX="428.0" layoutY="36.0" prefHeight="255.0" prefWidth="394.0" />
+   </children>
+</Pane>

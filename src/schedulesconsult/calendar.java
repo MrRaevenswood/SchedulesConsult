@@ -54,6 +54,8 @@ public class calendar implements Initializable{
         @FXML
         private Button bt_NextWeek;
         @FXML
+        private Button bt_Reports;
+        @FXML
         private DatePicker datePick_MonthlyDate;
         
         @FXML
@@ -172,6 +174,9 @@ public class calendar implements Initializable{
         }
         
         public void populateAppointmentTable(LocalDate selectedDate) throws ClassNotFoundException{
+            
+            tbl_Appointments.getItems().clear();
+            
             int year = selectedDate.getYear();
             Month month = selectedDate.getMonth();
             int currentUserId = 1;
@@ -366,6 +371,14 @@ public class calendar implements Initializable{
         
         newAppointmentStage.setScene(newAppointment);
         newAppointmentStage.show();
+    }
+    
+    public void openReportsWindow() throws IOException{
+        Scene reports = new Scene(FXMLLoader.load(getClass().getResource("reports.fxml")));
+        Stage reportsStage = new Stage();
+        
+        reportsStage.setScene(reports);
+        reportsStage.show();
     }
 
     public static class AppointmentQueryLabels {

@@ -13,9 +13,7 @@
    <children>
       <Button fx:id="bt_SchAppt" layoutX="32.0" layoutY="414.0" mnemonicParsing="false" onAction="#openScheduleAppointmentWindow" text="Schedule Appointment" />
       <Button fx:id="bt_Exit" layoutX="996.0" layoutY="414.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="88.0" text="Exit" />
-      <Button fx:id="bt_AddCustomer" layoutX="542.0" layoutY="413.0" mnemonicParsing="false" onAction="#openCustomerAdd" prefHeight="27.0" prefWidth="122.0" text="Add Customer" />
-      <Button fx:id="bt_LastWeek" layoutX="689.0" layoutY="39.0" mnemonicParsing="false" text="Last Week" />
-      <Button fx:id="bt_NextWeek" layoutX="687.0" layoutY="92.0" mnemonicParsing="false" text="Next Week" />
+      <Button fx:id="bt_AddCustomer" layoutX="303.0" layoutY="413.0" mnemonicParsing="false" onAction="#openCustomerAdd" prefHeight="27.0" prefWidth="122.0" text="Add Customer" />
       <DatePicker fx:id="datePick_MonthlyDate" layoutX="917.0" layoutY="78.0" onAction="#calendarWeeklyDatePopulate" />
       <Label layoutX="210.0" layoutY="25.0" prefHeight="53.0" prefWidth="405.0" text="Appointment Calendar">
          <font>
@@ -52,5 +50,6 @@
             <TableColumn fx:id="col_Sunday" prefWidth="124.0" text="Sunday" />
         </columns>
       </TableView>
+      <Button fx:id="bt_Reports" layoutX="678.0" layoutY="414.0" mnemonicParsing="false" onAction="#openReportsWindow" text="Reports" />
    </children>
 </Pane>
