@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="322.0" prefWidth="856.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.report">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="322.0" prefWidth="1227.0" style="-fx-background-color: grey;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="schedulesconsult.report">
    <children>
       <Label layoutX="155.0" layoutY="14.0" text="Reports">
          <font>
@@ -28,6 +28,6 @@
       </Label>
       <Button fx:id="bt_RunReport" layoutX="53.0" layoutY="251.0" mnemonicParsing="false" onAction="#runReports" text="Run Report" />
       <Button fx:id="bt_Cancel" layoutX="300.0" layoutY="252.0" mnemonicParsing="false" text="Cancel" />
-      <TextArea fx:id="txtArea_Results" layoutX="428.0" layoutY="36.0" prefHeight="255.0" prefWidth="394.0" />
+      <TextArea fx:id="txtArea_Results" layoutX="428.0" layoutY="36.0" prefHeight="255.0" prefWidth="773.0" />
    </children>
 </Pane>
