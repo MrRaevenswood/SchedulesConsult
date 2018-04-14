@@ -79,7 +79,7 @@ public class report{
                     Logger.getLogger(report.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }else{
-                
+                appointmentByCustomer();
             } 
         }
         
@@ -196,6 +196,64 @@ public class report{
                 Logger.getLogger(report.class.getName()).log(Level.SEVERE, null, ex);
             }finally{
                 dbConn.close();
+            }
+        }
+        public void appointmentByCustomer(){
+            String customer = inputDiagPop.apply("Customer Name Required", "Please Enter A Customer Name: ");
+            int custId = 0;
+            
+            try{
+                Class.forName("com.mysql.jdbc.Driver");
+                
+                dbConn =  DriverManager.getConnection(
+                    SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
+
+                Statement stmt = dbConn.createStatement();
+                
+                String customerIdQuery = "Select customerId From customer Where customerName = '" + customer + "'";
+                
+                ResultSet rs = stmt.executeQuery(customerIdQuery);
+                
+                if(!rs.next()){
+                    alertPop.accept("Customer Not Found", "Please enter a valid customer: ");
+                    return;
+                }else{
+                    custId = rs.getInt(1);
+                }
+                
+                rs.close();
+                
+                String customerScheduleQuery = "Select title, location, contact, start, end"
+                        + " From appointment Where customerId = " + custId;
+                
+                rs = stmt.executeQuery(customerScheduleQuery);
+                
+                if(!rs.next()){
+                    alertPop.accept("No Appointments Found", "Customer Does Not Have Appointments");
+                    return;
+                }else{
+                    txtArea_Results.setText("Title                Location        Contact          Start                                   End");
+                    txtArea_Results.appendText(System.getProperty("line.separator"));
+                    txtArea_Results.appendText("--------------------------------------------------------------------------------------------------------------------");
+                    txtArea_Results.appendText(System.getProperty("line.separator"));
+                    txtArea_Results.appendText(rs.getString(1) + "                 " + rs.getString(2) + "                " + rs.getString(3)
+                            + "                " + rs.getString(4) + "       " + rs.getString(5));
+                    txtArea_Results.appendText(System.getProperty("line.separator"));
+                    
+                    while(rs.next()){
+                        txtArea_Results.appendText(rs.getString(1) + "                 " + rs.getString(2) + "                " + rs.getString(3)
+                            + "                " + rs.getString(4) + "       " + rs.getString(5));
+                        txtArea_Results.appendText(System.getProperty("line.separator"));
+                    }
+                }
+                
+                rs.close();
+                
+                
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(report.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(report.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 }

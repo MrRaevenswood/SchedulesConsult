@@ -135,9 +135,22 @@ public class appointment implements Initializable {
                   alertPop.accept("After Hours Selected", "Either your start, end, or both times are after or normal business hours of 8 am - 5 pm");
                   return;
                }
-
+               
+               int customerId = 0;
+               String customerIdQuery = "Select customerId From customer Where customerName = '" + newAppt.getAppointmentContact() + "'";
+               ResultSet rs = stmt.executeQuery(customerIdQuery);
+                
+                if(!rs.next()){
+                    alertPop.accept("Customer Not Found", "Please enter a valid customer: ");
+                    return;
+                }else{
+                    customerId = rs.getInt(1);
+                }
+                
+                rs.close();
+               
                 String addScheduleQuery = "Insert into appointment (customerId, title, description, location, contact, url, start, end, createDate"
-                        + ", createdBy, lastUpdate, lastUpdatedBy, userId) values (" + 1 + " , " + "'" + newAppt.getAppointmentTitle()
+                        + ", createdBy, lastUpdate, lastUpdatedBy, userId) values (" + customerId + " , " + "'" + newAppt.getAppointmentTitle()
                         + "','" + newAppt.getAppointmentDescription() + "','" + newAppt.getAppointmentLocation() + "','" + newAppt.getAppointmentContact() 
                         + "','" + newAppt.getAppointmentUrl() + "','" 
                         + newAppt.appointmentStart + "','" + newAppt.appointmentEnd + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" 
