@@ -21,7 +21,7 @@ public class LogIn {
         @FXML
         private TextField txt_UserName;
         @FXML
-        private TextField txt_Password;
+        private PasswordField pass_Password;
         @FXML
         private RadioButton rb_SpanishLogin;
         @FXML
@@ -46,7 +46,7 @@ public class LogIn {
             LogIn newLogin = new LogIn();
             String logInLanguage = "";
             newLogin.setUserName(txt_UserName.getText());
-            newLogin.setPassword(txt_Password.getText());
+            newLogin.setPassword(pass_Password.getText());
             
             if(rb_SpanishLogin.isSelected()){
                 logInLanguage = "Spanish";

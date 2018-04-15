@@ -21,7 +21,7 @@ public class addNewUser {
     @FXML
     private TextField txt_NewUserName;
     @FXML
-    private TextField txt_Password;
+    private PasswordField pass_Password;
     @FXML
     private Button bt_AddNewUser;
     @FXML
@@ -58,7 +58,7 @@ public class addNewUser {
     public void createNewUser() throws ClassNotFoundException{
         addNewUser newUser = new addNewUser();
         newUser.setUserName(txt_NewUserName.getText());
-        newUser.setPassword(txt_Password.getText());
+        newUser.setPassword(pass_Password.getText());
         
         LocalDateTime currentTime = LocalDateTime.now();
         Connection dbConn = null;
