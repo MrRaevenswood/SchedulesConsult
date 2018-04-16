@@ -105,7 +105,7 @@ public class calendar implements Initializable{
         private final List<Integer> daysOfWeek = Arrays.asList(1,2,3,4,5,6,7);
         private LocalDate selectedDate;
         private ObservableList<AppointmentQueryLabels> data = FXCollections.observableArrayList();
-
+        
         public void calendarWeeklyDatePopulate() throws ClassNotFoundException{
             
             tbl_Appointments.refresh();

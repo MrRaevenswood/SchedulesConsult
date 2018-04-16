@@ -91,7 +91,13 @@ public class report{
             try{
                 Month.valueOf(month.toUpperCase());
             }catch(IllegalArgumentException ex){
-                alertPop.accept("Not a valid month","Please enter a valid month");
+                
+                if(SchedulesConsult.isEnglish == true){
+                    alertPop.accept("Not a valid month","Please enter a valid month");
+                }else if(SchedulesConsult.isSpanish == true){
+                    alertPop.accept("No es un mes valido","Por favor, introduzca un mes válido");
+                }
+                
                 return;
             }
             
@@ -99,7 +105,13 @@ public class report{
              try{
                 Year.parse(year);
             }catch(DateTimeParseException ex){
-                alertPop.accept("Not a valid year", "Please enter a valid year");
+                
+                if(SchedulesConsult.isEnglish == true){
+                    alertPop.accept("Not a valid year", "Please enter a valid year");
+                }else if(SchedulesConsult.isSpanish == true){
+                    alertPop.accept("No es un año válido","Por favor, introduzca un año válido");
+                }
+                
             }
             
             String apptType = inputDiagPop.apply("Appointment Type Required","Please enter the appointment type");
@@ -156,7 +168,12 @@ public class report{
                 ResultSet rs = stmt.executeQuery(consultantSearchQuery);
                 
                 if(!rs.next()){
-                    alertPop.accept("Consultant Not Found", "Consultant Not Found");
+                    if(SchedulesConsult.isEnglish == true){
+                        alertPop.accept("Consultant Not Found", "Consultant Not Found");
+                    }else if(SchedulesConsult.isSpanish == true){
+                        alertPop.accept("Consultor no encontrado", "Consultor no encontrado");
+                    }
+                    
                 }else{
                     userId = rs.getInt(1);
                 }
@@ -168,7 +185,12 @@ public class report{
                 rs = stmt.executeQuery(consultantScheduleQuery);
                 
                 if(!rs.next()){
-                    alertPop.accept("No Appointments Found", "Consultant Does Not Have Appointments");
+                    if(SchedulesConsult.isEnglish == true){
+                        alertPop.accept("No Appointments Found", "Consultant Does Not Have Appointments");
+                    }else if(SchedulesConsult.isSpanish == true){
+                        alertPop.accept("No se encontraron citas","Consultor no tiene citas");
+                    }
+                    
                     return;
                 }else{
                     txtArea_Results.setText("Title                Location        Contact          Start                                   End");
@@ -215,7 +237,12 @@ public class report{
                 ResultSet rs = stmt.executeQuery(customerIdQuery);
                 
                 if(!rs.next()){
-                    alertPop.accept("Customer Not Found", "Please enter a valid customer: ");
+                    if(SchedulesConsult.isEnglish == true){
+                        alertPop.accept("Customer Not Found", "Please enter a valid customer: ");
+                    }else if(SchedulesConsult.isSpanish == true){
+                        alertPop.accept("Cliente no encontrado","Por favor ingrese un cliente válido:");
+                    }
+                    
                     return;
                 }else{
                     custId = rs.getInt(1);
@@ -229,7 +256,12 @@ public class report{
                 rs = stmt.executeQuery(customerScheduleQuery);
                 
                 if(!rs.next()){
-                    alertPop.accept("No Appointments Found", "Customer Does Not Have Appointments");
+                    if(SchedulesConsult.isEnglish == true){
+                        alertPop.accept("No Appointments Found", "Customer Does Not Have Appointments");
+                    }else if(SchedulesConsult.isSpanish == true){
+                        alertPop.accept("No se encontraron citas","El cliente no tiene citas");
+                    }
+                    
                     return;
                 }else{
                     txtArea_Results.setText("Title                Location        Contact          Start                                   End");

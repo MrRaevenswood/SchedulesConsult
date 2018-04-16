@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
@@ -40,6 +41,13 @@ public class customerRecords {
     private String custAddress = "";
     private String custCountry = "";
     private String custCity = "";
+    
+    BiConsumer<String,String> alertPop = (t,c) -> {
+                   Alert newAlert = new Alert(Alert.AlertType.ERROR);
+                   newAlert.setTitle(t);
+                   newAlert.setContentText(c);
+                   newAlert.showAndWait();
+               };
     
     
     public void addCustomerRecord() throws ClassNotFoundException, SQLException{
@@ -123,12 +131,13 @@ public class customerRecords {
             stmt.executeUpdate(customerInsertQuery);
             dbConn.close();
         }catch(SQLException ex){
-            Alert sqlException = new Alert(Alert.AlertType.ERROR);
-            sqlException.setTitle("Error Connecting to Database");
-            sqlException.setHeaderText("Error");
-            sqlException.setContentText("There was an error connecting to the database that is likely due to the network.");
             
-            sqlException.showAndWait();
+            if(SchedulesConsult.isEnglish == true){
+                alertPop.accept("Error Connecting to Database", "There was an error connecting to the database that is likely due to the network.");
+            }else if(SchedulesConsult.isSpanish == true){
+                alertPop.accept("Error al conectarse a la base de datos", "Hubo un error al conectarse a la base de datos que probablemente se deba a la red.");
+            }
+
             
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
             return;

@@ -11,10 +11,16 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import static java.util.Calendar.MINUTE;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -73,6 +79,9 @@ public class appointment implements Initializable {
         @FXML
         private Button bt_Cancel;
         
+        private final ScheduledExecutorService appointmentReminder = Executors.newScheduledThreadPool(1);
+        
+        
         BiConsumer<String,String> alertPop = (t,c) -> {
                    Alert newAlert = new Alert(Alert.AlertType.ERROR);
                    newAlert.setTitle(t);
@@ -129,10 +138,20 @@ public class appointment implements Initializable {
                boolean isAfterHours = checkApptAfterHours.test(newAppt.appointmentStart, newAppt.appointmentEnd);
                
                if(isStartAfterEnd == true) {
-                  alertPop.accept("Start Time Is After End Time", "Please select a time that is before the end time");
+                   if(SchedulesConsult.isEnglish == true){
+                       alertPop.accept("Start Time Is After End Time", "Please select a time that is before the end time");
+                   }else if(SchedulesConsult.isSpanish == false){
+                       alertPop.accept("Hora de inicio es después del tiempo de finalización", "Por favor, seleccione una hora antes de la hora de finalización");
+                   }
+                  
                   return;
                }else if (isAfterHours == true) {
-                  alertPop.accept("After Hours Selected", "Either your start, end, or both times are after or normal business hours of 8 am - 5 pm");
+                   if(SchedulesConsult.isEnglish == true){
+                       alertPop.accept("After Hours Selected", "Either your start, end, or both times are after or normal business hours of 8 am - 5 pm");
+                   }else if(SchedulesConsult.isSpanish == true){
+                       alertPop.accept("Fuera de horas", "O bien el inicio, el final o ambas veces son posteriores o el horario comercial normal es de 8 a. M. A 5 p. M.");
+                   }
+                  
                   return;
                }
                
@@ -141,7 +160,12 @@ public class appointment implements Initializable {
                ResultSet rs = stmt.executeQuery(customerIdQuery);
                 
                 if(!rs.next()){
-                    alertPop.accept("Customer Not Found", "Please enter a valid customer: ");
+                    if(SchedulesConsult.isEnglish == true){
+                        alertPop.accept("Customer Not Found", "Please enter a valid customer: ");
+                    }else if(SchedulesConsult.isSpanish == true){
+                        alertPop.accept("Cliente no encontrado","Por favor ingrese un cliente válido:");
+                    }
+                    
                     return;
                 }else{
                     customerId = rs.getInt(1);
@@ -157,7 +181,12 @@ public class appointment implements Initializable {
                         + currentTime + "','" + SchedulesConsult.currentLogIn + "'," + newUser.getUserIdByName(SchedulesConsult.currentLogIn) + ")" ;
                
                 if(newAppt.isAppointmentOverlapping(dbConn, newAppt.appointmentStart, newAppt.appointmentEnd)){
-                    alertPop.accept("Appointment Overlap Detected", "Please Select A New Start/End Time for your request.");
+                    if(SchedulesConsult.isEnglish == true){
+                        alertPop.accept("Appointment Overlap Detected", "Please Select A New Start/End Time for your request.");
+                    }else if(SchedulesConsult.isSpanish == true){
+                        alertPop.accept("Superposición de citas detectada","Seleccione una nueva hora de inicio / finalización para su solicitud.");
+                    }
+                    
                     return;
                 }
                 
@@ -194,8 +223,12 @@ public class appointment implements Initializable {
                 ResultSet customerExists = stmt.executeQuery(customerIdQuery);
                 
                 if(!customerExists.next()){
+                    if(SchedulesConsult.isEnglish == true){
+                        alertPop.accept("Customer does not exist in database","Customer was not found.");
+                    }else if(SchedulesConsult.isSpanish == true){
+                        alertPop.accept("El cliente no existe en la base de datos", "Cliente no fue encontrado.");
+                    }
                     
-                    alertPop.accept("Customer does not exist in database","Customer was not found.");
                     
                 }else{
                    String maxCustomerIDQuery = "Select customerId From customer";
@@ -226,12 +259,23 @@ public class appointment implements Initializable {
                 
                 while(allAppts.next()){
                    if (allAppts.getInt(2) <= startTime && allAppts.getInt(3) >= startTime){
-                       alertPop.accept("Invalid StartTime Choosen", "Please try a start time that is not within range of a current appointment");
+                       if(SchedulesConsult.isEnglish == true){
+                           alertPop.accept("Invalid StartTime Choosen", "Please try a start time that is not within range of a current appointment");
+                       }else if(SchedulesConsult.isSpanish == true){
+                           alertPop.accept("Hora de inicio no válida seleccionada","Intente una hora de inicio que no esté dentro del alcance de una cita actual");
+                       }
+                       
                        return true;
                    }
                    
                    if(allAppts.getInt(2) <= endTime && allAppts.getInt(3) >= endTime){
-                       alertPop.accept("Invalid EndTime Choosen", "Please try an end time that is not within range of a current appointment");
+                       
+                       if(SchedulesConsult.isEnglish == true){
+                           alertPop.accept("Invalid EndTime Choosen", "Please try an end time that is not within range of a current appointment");
+                       }else if(SchedulesConsult.isSpanish == true){
+                           alertPop.accept("Hora de finalización no válida elegida","Intente una hora de finalización que no esté dentro del alcance de una cita actual");
+                       }
+                       
                        return true;
                    }
                 }
@@ -306,25 +350,41 @@ public class appointment implements Initializable {
 	public void setReminderIncrement(int reminderIncrement) {
 		this.reminderIncrement = reminderIncrement;
 	}
-    
-    public class AppointmentsThisWeek{
-        
-    }    
-    
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        ObservableList<String> time = FXCollections.observableArrayList();;
-        time.addAll(Arrays.asList("01:00","02:00","03:00","04:00","05:00","06:00",
-                "07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00",
-                "16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"));
-       
-        comBx_StartTime.setItems(time);
-        comBx_endTime.setItems(time);
-    }
-    
-    public void close(){
-        Stage stage = (Stage) bt_Cancel.getScene().getWindow();
-        stage.close();
-    }
 
+        public void appointmentReminder(LocalDateTime dateOfAppointment){
+            Runnable fifteenMinuteReminder = new Runnable(){
+                @Override
+                public void run() {
+                    alertPop.accept("Appointment in 15 mins", "Please be ready for your appointment in 15 mins");
+                }
+            };
+            
+            
+            
+            appointmentReminder.schedule(fifteenMinuteReminder, dateOfAppointment , TimeUnit.DAYS)
+        }
+        
+        public int computeDelay(LocalDateTime dateOfAppointment){
+            dateOfAppointment.until(LocalDateTime.now(),ChronoUnit.MINUTES);
+        }
+
+        public class AppointmentsThisWeek{
+
+        }    
+
+        @Override
+        public void initialize(URL location, ResourceBundle resources) {
+            ObservableList<String> time = FXCollections.observableArrayList();;
+            time.addAll(Arrays.asList("01:00","02:00","03:00","04:00","05:00","06:00",
+                    "07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00",
+                    "16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"));
+
+            comBx_StartTime.setItems(time);
+            comBx_endTime.setItems(time);
+        }
+
+        public void close(){
+            Stage stage = (Stage) bt_Cancel.getScene().getWindow();
+            stage.close();
+        }    
 }

@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
@@ -30,6 +31,13 @@ public class addNewUser {
     private String userName = "";
     private String password = "";
     private Connection dbConnection;
+    
+     BiConsumer<String,String> alertPop = (t,c) -> {
+                   Alert newAlert = new Alert(Alert.AlertType.ERROR);
+                   newAlert.setTitle(t);
+                   newAlert.setContentText(c);
+                   newAlert.showAndWait();
+        };
 
     public Connection getDbConnection(){
         return this.dbConnection;
@@ -80,22 +88,27 @@ public class addNewUser {
                         "','" + currentTime + "','" + SchedulesConsult.databaseUser + "')";
                     stmt.executeUpdate(createUserQuery);
                 }else{
-                    Alert userNameAlreadyExists = new Alert(Alert.AlertType.ERROR);
-                    userNameAlreadyExists.setTitle("User Already Exists");
-                    userNameAlreadyExists.setHeaderText("Try A New User");
-                    userNameAlreadyExists.setContentText("User Name is already in the system. Please try another user name.");
                     
-                    userNameAlreadyExists.showAndWait();
+                    if(SchedulesConsult.isEnglish == true){
+                        alertPop.accept("User Already Exists", "User Name is already in the system. Please try another user name.");
+                    }
+                    
+                    if(SchedulesConsult.isSpanish == true){
+                        alertPop.accept("El usuario ya existe", "El nombre de usuario ya está en el sistema. Por favor intente con otro nombre de usuario.");
+                    }
+                 
                     dbConn.close();
                     return;
                 }
         }catch(SQLException ex){
-            Alert sqlException = new Alert(Alert.AlertType.ERROR);
-            sqlException.setTitle("Error Connecting to Database");
-            sqlException.setHeaderText("Error");
-            sqlException.setContentText("There was an error connecting to the database that is likely due to the network.");
             
-            sqlException.showAndWait();
+            if(SchedulesConsult.isEnglish == true){
+                alertPop.accept("Error Connecting to Database", "There was an error connecting to the database that is likely due to the network.");
+            }
+ 
+            if(SchedulesConsult.isSpanish == true){
+                alertPop.accept("Error al conectarse a la base de datos","Hubo un error al conectarse a la base de datos que probablemente se deba a la red.");
+            }
             
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
             return;

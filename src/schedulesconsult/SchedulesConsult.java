@@ -21,6 +21,8 @@ public class SchedulesConsult extends Application {
     public final static String databaseUser = "U04Fby";
     public final static String databasePassword = "53688222587";
     public static String currentLogIn = "";
+    public static Boolean isEnglish = false;
+    public static Boolean isSpanish = false;
     
     
     
