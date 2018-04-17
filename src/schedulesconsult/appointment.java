@@ -8,8 +8,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ import java.util.Arrays;
 import static java.util.Calendar.MINUTE;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -29,6 +33,8 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -42,6 +48,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class appointment implements Initializable {
 
@@ -78,15 +85,12 @@ public class appointment implements Initializable {
         private Button bt_ScheduleAppointment;
         @FXML
         private Button bt_Cancel;
-        
-        private final ScheduledExecutorService appointmentReminder = Executors.newScheduledThreadPool(1);
-        
-        
+      
         BiConsumer<String,String> alertPop = (t,c) -> {
                    Alert newAlert = new Alert(Alert.AlertType.ERROR);
                    newAlert.setTitle(t);
                    newAlert.setContentText(c);
-                   newAlert.showAndWait();
+                   newAlert.show();
                };
         
         public appointment(){}
@@ -199,6 +203,20 @@ public class appointment implements Initializable {
                 };
 
                 insertAppointment.accept(addScheduleQuery);
+                
+                Timer appointmentReminder = new Timer();
+                int fifteenMinsInMilliSeconds = 15 * 60 * 1000;
+                int delayInMilliseconds = (int) (((newAppt.appointmentStart.toEpochSecond(ZoneOffset.UTC) - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) * 1000) - fifteenMinsInMilliSeconds);
+                
+                System.out.println(delayInMilliseconds);
+                
+                Timeline apptAlarm = new Timeline(new KeyFrame(Duration.millis(delayInMilliseconds),
+                ae -> alertPop.accept("Appointment In 15 Minutes", "Please prepare for your appointment which is in 15 minutes")));
+                
+                apptAlarm.play();
+                
+                //appointmentReminder.schedule(new scheduleAppointmentReminder(),delayInMilliseconds);
+
                 
             }catch(SQLException ex){ 
                 
@@ -351,33 +369,32 @@ public class appointment implements Initializable {
 		this.reminderIncrement = reminderIncrement;
 	}
 
-        public void appointmentReminder(LocalDateTime dateOfAppointment){
-            Runnable fifteenMinuteReminder = new Runnable(){
-                @Override
-                public void run() {
-                    alertPop.accept("Appointment in 15 mins", "Please be ready for your appointment in 15 mins");
-                }
-            };
-            
-            
-            
-            appointmentReminder.schedule(fifteenMinuteReminder, dateOfAppointment , TimeUnit.DAYS)
-        }
-        
-        public int computeDelay(LocalDateTime dateOfAppointment){
-            dateOfAppointment.until(LocalDateTime.now(),ChronoUnit.MINUTES);
-        }
 
-        public class AppointmentsThisWeek{
+        public class scheduleAppointmentReminder extends TimerTask{
+            private LocalDateTime timeToBeRemindedAt;
+            
+            BiConsumer<String,String> alertPop = (t,c) -> {
+                   Alert newAlert = new Alert(Alert.AlertType.ERROR);
+                   newAlert.setTitle(t);
+                   newAlert.setContentText(c);
+                   newAlert.showAndWait();
+               };
+            
 
+            @Override
+            public void run() {
+                alertPop.accept("Appointment In 15 Minutes", "Please prepare for your appointment which is in 15 minutes");
+            }
+                        
         }    
 
         @Override
         public void initialize(URL location, ResourceBundle resources) {
             ObservableList<String> time = FXCollections.observableArrayList();;
-            time.addAll(Arrays.asList("01:00","02:00","03:00","04:00","05:00","06:00",
-                    "07:00","08:00","09:00","10:00","11:00","12:00","13:00","14:00","15:00",
-                    "16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"));
+            time.addAll(Arrays.asList("07:30","07:45","08:00","08:15","08:30","08:45","09:00","09:15"
+                    ,"09:30","09:45","10:00","10:15","10:30","10:45","11:00","11:15","11:30","11:45","12:00"
+                    ,"12:15","12:30","12:45","13:00","13:15","13:30","13:45","14:00","14:15","14:30","14:45"
+                    ,"15:00","15:15","15:30","15:45","16:00","16:15","16:30","16:45","17:00","17:15","17:30"));
 
             comBx_StartTime.setItems(time);
             comBx_endTime.setItems(time);
