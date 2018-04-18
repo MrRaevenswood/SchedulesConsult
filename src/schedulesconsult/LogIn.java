@@ -1,15 +1,22 @@
 package schedulesconsult;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.function.BiConsumer;
+import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -106,6 +113,8 @@ public class LogIn {
                         
                         SchedulesConsult.currentLogIn = newLogin.getUserName();
                         
+                        logUserLogIn(SchedulesConsult.currentLogIn);
+                        
                         Scene calendar = new Scene(FXMLLoader.load(getClass().getResource("Calendar.fxml")));
                         Stage appointmentStage = new Stage();
                         
@@ -139,7 +148,24 @@ public class LogIn {
             }
         }
         
-        
+        public void logUserLogIn(String logIn) throws IOException{
+            Logger userLog = Logger.getLogger("SignInLog");
+            FileHandler userLogFile;
+            File userFile = new File("C:\\Users\\Public\\Documents\\userLog.log");
+            
+            if(userFile.exists()){
+                try(PrintWriter appendLog = new PrintWriter(new BufferedWriter(new FileWriter("C:\\Users\\Public\\Documents\\userLog.log", true)))){
+                    appendLog.println("User: " + logIn + " logged in to the system at " + LocalDateTime.now());
+                }    
+            }else{
+                userLogFile = new FileHandler("C:\\Users\\Public\\Documents\\userLog.log");
+                userLog.addHandler(userLogFile);
+                SimpleFormatter logFormat = new SimpleFormatter();
+                userLogFile.setFormatter(logFormat);
+
+                userLog.info("User: " + logIn + " logged in to the system at " + LocalDateTime.now());
+            }  
+        }
         
         // Getter and Setter Methods
 	public String getUserName() {

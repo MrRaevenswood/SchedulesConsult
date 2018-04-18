@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import static java.util.Calendar.MINUTE;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -85,7 +86,9 @@ public class appointment implements Initializable {
         private Button bt_ScheduleAppointment;
         @FXML
         private Button bt_Cancel;
-      
+        
+        private Calendar currentTimeZone;
+        
         BiConsumer<String,String> alertPop = (t,c) -> {
                    Alert newAlert = new Alert(Alert.AlertType.ERROR);
                    newAlert.setTitle(t);
@@ -136,6 +139,8 @@ public class appointment implements Initializable {
                BiPredicate<LocalDateTime,LocalDateTime> checkApptStartEnd = (s,e) -> s.isAfter(e);
                BiPredicate<LocalDateTime,LocalDateTime> checkApptAfterHours = (s,e) -> s.toLocalTime().isBefore(businessStart) ||
                        e.toLocalTime().isAfter(businessEnd);
+               
+               
                
                
                boolean isStartAfterEnd = checkApptStartEnd.test(newAppt.appointmentStart, newAppt.appointmentEnd);
@@ -203,15 +208,13 @@ public class appointment implements Initializable {
                 };
 
                 insertAppointment.accept(addScheduleQuery);
-                
-                Timer appointmentReminder = new Timer();
+            
                 int fifteenMinsInMilliSeconds = 15 * 60 * 1000;
                 int delayInMilliseconds = (int) (((newAppt.appointmentStart.toEpochSecond(ZoneOffset.UTC) - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) * 1000) - fifteenMinsInMilliSeconds);
                 
-                System.out.println(delayInMilliseconds);
-                
                 Timeline apptAlarm = new Timeline(new KeyFrame(Duration.millis(delayInMilliseconds),
-                ae -> alertPop.accept("Appointment In 15 Minutes", "Please prepare for your appointment which is in 15 minutes")));
+                ae -> alertPop.accept("Appointment In 15 Minutes for user " + SchedulesConsult.currentLogIn , "Please prepare for your appointment,with "
+                        + newAppt.appointmentContact + " ,which is in 15 minutes")));
                 
                 apptAlarm.play();
                 
