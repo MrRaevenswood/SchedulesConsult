@@ -30,5 +30,6 @@
       <Label layoutX="383.0" layoutY="109.0" text="Pick your language " />
       <Hyperlink fx:id="href_RegisterUser" layoutX="216.0" layoutY="211.0" onMouseClicked="#createNewUser" text="Not Registered?" textFill="#01141e" underline="true" />
       <PasswordField fx:id="pass_Password" layoutX="175.0" layoutY="179.0" />
+      <Label fx:id="lbl_UserLocation" layoutX="353.0" layoutY="267.0" prefHeight="17.0" prefWidth="15.0" />
    </children>
 </Pane>

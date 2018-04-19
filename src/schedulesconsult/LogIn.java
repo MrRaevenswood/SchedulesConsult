@@ -5,13 +5,18 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.TextStyle;
 import java.util.Date;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.function.BiConsumer;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -19,11 +24,12 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-public class LogIn {
+public class LogIn implements Initializable{
 
         //FXML Variables for LogIn Form
         @FXML
@@ -34,6 +40,8 @@ public class LogIn {
         private RadioButton rb_SpanishLogin;
         @FXML
         private RadioButton rb_EnglishLogIn;
+        @FXML
+        private Label lbl_UserLocation;
     
 	private String userName;
 	private String passWord;
@@ -76,7 +84,7 @@ public class LogIn {
             }
             Connection dbConn = null;
             newLogin.setLanguage(logInLanguage);
-            //figure out translation later
+            
             try {
                 
                 Class.forName("com.mysql.jdbc.Driver");
@@ -214,5 +222,12 @@ public class LogIn {
         public void close(){
              System.exit(0);
         }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        ZoneId locationOfUser = ZoneId.systemDefault();
+        
+        lbl_UserLocation.setText("User Location is: " + locationOfUser.getDisplayName(TextStyle.FULL, Locale.getDefault()) + " Zone");
+    }
 
 }
