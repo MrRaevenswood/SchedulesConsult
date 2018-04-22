@@ -11,9 +11,12 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import static java.time.temporal.TemporalQueries.zone;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -186,10 +189,10 @@ public class appointment implements Initializable {
                         + ", createdBy, lastUpdate, lastUpdatedBy, userId) values (" + customerId + " , " + "'" + newAppt.getAppointmentTitle()
                         + "','" + newAppt.getAppointmentDescription() + "','" + newAppt.getAppointmentLocation() + "','" + newAppt.getAppointmentContact() 
                         + "','" + newAppt.getAppointmentUrl() + "','" 
-                        + newAppt.appointmentStart + "','" + newAppt.appointmentEnd + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" 
+                        + newAppt.appointmentStart.atZone(ZoneId.systemDefault()) + "','" + newAppt.appointmentEnd.atZone(ZoneId.systemDefault()) + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" 
                         + currentTime + "','" + SchedulesConsult.currentLogIn + "'," + newUser.getUserIdByName(SchedulesConsult.currentLogIn) + ")" ;
                
-                if(newAppt.isAppointmentOverlapping(dbConn, newAppt.appointmentStart, newAppt.appointmentEnd)){
+                if(newAppt.isAppointmentOverlapping(dbConn, newAppt.appointmentStart.atZone(ZoneId.systemDefault()), newAppt.appointmentEnd.atZone(ZoneId.systemDefault()))){
                     if(SchedulesConsult.isEnglish == true){
                         alertPop.accept("Appointment Overlap Detected", "Please Select A New Start/End Time for your request.");
                     }else if(SchedulesConsult.isSpanish == true){
@@ -265,7 +268,7 @@ public class appointment implements Initializable {
             }
         }
         
-        public boolean isAppointmentOverlapping(Connection dbConn, LocalDateTime start, LocalDateTime end) throws ClassNotFoundException{
+        public boolean isAppointmentOverlapping(Connection dbConn, ZonedDateTime start, ZonedDateTime end) throws ClassNotFoundException{
             int startTime = start.getHour();
             int endTime = end.getHour();
             

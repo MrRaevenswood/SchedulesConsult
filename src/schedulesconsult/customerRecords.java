@@ -63,7 +63,15 @@ public class customerRecords {
         String countryIdQuery = "Select countryId From country Where country = '" + newCustomer.getcustomerCountry() + "'";
         String cityIdQuery = "Select cityId From city Where city = '" + newCustomer.getcustomerCity() + "'";
         String addressIdQuery = "Select addressId From address Where address = '" + newCustomer.getcustomerAddress() + "'";
-         
+        
+        if(txt_FullName.getText().trim().isEmpty() || txt_Address.getText().trim().isEmpty()
+                || txt_City.getText().trim().isEmpty() || txt_Country.getText().trim().isEmpty() 
+                || txt_PostalCode.getText().trim().isEmpty() || txt_PhoneNumber.getText().trim().isEmpty())
+        {
+            alertPop.accept("Empty Fields Present", "All fields must be populated. Please populate these fields");
+            return;
+        }
+        
         LocalDateTime currentTime = LocalDateTime.now();
         Connection dbConn = null;
         try{
@@ -131,15 +139,10 @@ public class customerRecords {
             stmt.executeUpdate(customerInsertQuery);
             dbConn.close();
         }catch(SQLException ex){
-            
-            if(SchedulesConsult.isEnglish == true){
-                alertPop.accept("Error Connecting to Database", "There was an error connecting to the database that is likely due to the network.");
-            }else if(SchedulesConsult.isSpanish == true){
-                alertPop.accept("Error al conectarse a la base de datos", "Hubo un error al conectarse a la base de datos que probablemente se deba a la red.");
-            }
-
-            
             Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+            
+            alertPop.accept("SQL Error", ex.getMessage());
+            
             return;
         }finally{
             dbConn.close();

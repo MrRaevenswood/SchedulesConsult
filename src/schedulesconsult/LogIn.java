@@ -37,10 +37,6 @@ public class LogIn implements Initializable{
         @FXML
         private PasswordField pass_Password;
         @FXML
-        private RadioButton rb_SpanishLogin;
-        @FXML
-        private RadioButton rb_EnglishLogIn;
-        @FXML
         private Label lbl_UserLocation;
     
 	private String userName;
@@ -71,13 +67,15 @@ public class LogIn implements Initializable{
             newLogin.setUserName(txt_UserName.getText());
             newLogin.setPassword(pass_Password.getText());
             
-            if(rb_SpanishLogin.isSelected()){
+            Locale loginLocale = Locale.getDefault();
+           
+            if(loginLocale.getLanguage().equals(new Locale("es").getLanguage())){
                 logInLanguage = "Spanish";
                 SchedulesConsult.isSpanish = true;
                 SchedulesConsult.isEnglish = false;
             }
             
-            if(rb_EnglishLogIn.isSelected()){
+            if(loginLocale.getLanguage().equals(new Locale("en").getLanguage())){
                 logInLanguage = "English";
                 SchedulesConsult.isEnglish = true;
                 SchedulesConsult.isSpanish = false;
@@ -98,8 +96,6 @@ public class LogIn implements Initializable{
                 ResultSet userExists = stmt.executeQuery(dbUserQuery);
                 
                 if(!userExists.next()){
-                    
-                    Alert userNotFound = new Alert(Alert.AlertType.ERROR);
                    
                    if(newLogin.getLanguage() == "English"){
                        
@@ -110,8 +106,7 @@ public class LogIn implements Initializable{
                        alertPop.accept("Error al conectarse a la base de datos", "La combinación nombre de usuario / contraseña no se encontró en el sistema");
 
                    }
-                   
-                   userNotFound.showAndWait();
+                 
                    dbConn.close();
                    return;
                     
@@ -226,8 +221,18 @@ public class LogIn implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         ZoneId locationOfUser = ZoneId.systemDefault();
+        Locale country = Locale.getDefault();
         
-        lbl_UserLocation.setText("User Location is: " + locationOfUser.getDisplayName(TextStyle.FULL, Locale.getDefault()) + " Zone");
+        if(country.getLanguage().equals(new Locale("es"))){
+            SchedulesConsult.isEnglish = false;
+            SchedulesConsult.isSpanish = true;
+        }else if(country.getLanguage().equals(new Locale("en"))){
+            SchedulesConsult.isEnglish = true;
+            SchedulesConsult.isSpanish = false;
+        }
+        
+        lbl_UserLocation.setText("User Location is: " + country.getCountry() + " "
+                + "on the " + locationOfUser.getDisplayName(TextStyle.FULL, Locale.getDefault()) + " Zone");
     }
 
 }
