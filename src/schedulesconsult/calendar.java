@@ -14,6 +14,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +38,11 @@ import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.w3c.dom.Node;
 
 public class calendar implements Initializable{
     
@@ -57,6 +60,8 @@ public class calendar implements Initializable{
         private Button bt_Reports;
         @FXML
         private DatePicker datePick_MonthlyDate;
+        @FXML
+        private GridPane gp_MonthlyView;
         
         @FXML
         private TextField textField_SundayDate;
@@ -254,7 +259,7 @@ public class calendar implements Initializable{
                 
                 tbl_Appointments.setItems(data);
                               
-                
+                populateMonthlyCalendarView(selectedDate,dbConn);
                             
             }catch(SQLException ex){
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
@@ -267,6 +272,98 @@ public class calendar implements Initializable{
             }
             
             
+        }
+        
+        public void populateMonthlyCalendarView(LocalDate selectedDateTime, Connection dbConn){
+      
+            Month selectedMonth = selectedDateTime.getMonth();
+            int lastDayOfMonth = selectedMonth.maxLength();
+            int dateOfSelected = selectedDateTime.getDayOfMonth();
+            LocalDate firstDateOfMonth = null;
+        
+            if(dateOfSelected != 1){
+              firstDateOfMonth = selectedDateTime.minusDays(dateOfSelected - 1);
+            }
+            
+            DayOfWeek dayOfFirstDate = firstDateOfMonth.getDayOfWeek();
+            int startIndex = dayOfFirstDate.getValue() - 1;
+            int row = 0;
+            int k = 1;
+            
+            gp_MonthlyView.getChildren().clear();
+            gp_MonthlyView.getColumnConstraints().clear();
+            
+            gp_MonthlyView.setGridLinesVisible(true);
+            
+            ColumnConstraints cc  = new ColumnConstraints();
+            cc.setPercentWidth(100/6);
+            gp_MonthlyView.getColumnConstraints().add(cc);
+            
+            HashMap<Integer, Integer> appointsToAdd = calculateAppointsForMonth(selectedDateTime,dbConn);
+            
+            
+            for(int i = 1; i <= 6; i++){
+                 cc.setPercentWidth(100/6);
+                 gp_MonthlyView.getColumnConstraints().add(cc);
+                
+                while(startIndex <= 6 ){
+                    
+                    if(k > lastDayOfMonth){ return;}
+                    
+                    try{
+                        appointsToAdd.get(k);
+                        gp_MonthlyView.add(new Label(Integer.toString(k) + "# of Appts: " + Integer.toString(appointsToAdd.get(k))), startIndex, row);
+                    }catch(NullPointerException ex){
+                        gp_MonthlyView.add(new Label(Integer.toString(k)), startIndex, row);
+                    }
+
+                    startIndex++;
+                    k++;
+                }
+                
+                
+                System.out.println(row);
+                startIndex = 0;
+                row++;
+            }
+            
+            
+            
+        }
+        
+        public HashMap<Integer,Integer> calculateAppointsForMonth(LocalDate selectedDate, Connection dbConn){
+            HashMap<Integer,Integer> appointmentTotalsForMonth = new HashMap<Integer,Integer>();
+            
+            try{
+                Class.forName("com.mysql.jdbc.Driver");
+                
+                dbConn =  DriverManager.getConnection(
+                    SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
+
+                Statement stmt = dbConn.createStatement();
+                
+                String appointsForMonth = "Select Day(start), Count(*) From (Select * From appointment where monthname(start) = '" + selectedDate.getMonth().name().toLowerCase() +  "' And year(start) = " + 
+                        selectedDate.getYear() +") as apt Group By Day(start) Order By Day(start) Asc "; 
+                
+                System.out.println(appointsForMonth);
+                
+                ResultSet appointmentTotals = stmt.executeQuery(appointsForMonth);
+                
+                while(appointmentTotals.next()){
+                    appointmentTotalsForMonth.put(appointmentTotals.getInt(1), appointmentTotals.getInt(2));
+                }
+                
+                
+                
+            }catch(SQLException ex){
+                Logger.getLogger(calendar.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(calendar.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+            
+            return appointmentTotalsForMonth;
         }
 	public void getDay() {
 		// TODO - implement calendarMonthApp.getDay
