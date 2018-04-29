@@ -126,8 +126,8 @@ public class LogIn implements Initializable{
                     
                 }else{
                        
-                        userId = userExists.getInt(1);
-                        startApptReminder(userId,dbConn);
+                        SchedulesConsult.currentUserId = userExists.getInt(1);
+                        startApptReminder(SchedulesConsult.currentUserId,dbConn);
                         
                         dbConn.close();
                         

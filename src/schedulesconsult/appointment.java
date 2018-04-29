@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -113,7 +114,7 @@ public class appointment implements Initializable {
             this.reminderIncrement = reminderIncrement;
         }
         
-        public void createAppointment() throws ClassNotFoundException, SQLException, IOException{
+        public void createAppointment() throws ClassNotFoundException, SQLException, IOException, ParseException{
             
             appointment newAppt = null;
             
@@ -217,6 +218,10 @@ public class appointment implements Initializable {
                 };
 
                 insertAppointment.accept(addScheduleQuery);
+                
+                LogIn currentLogIn = new LogIn();
+                
+                currentLogIn.startApptReminder(SchedulesConsult.currentUserId, dbConn);
                 
             }
             

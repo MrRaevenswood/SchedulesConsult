@@ -23,6 +23,7 @@ public class SchedulesConsult extends Application {
     public static String currentLogIn = "";
     public static Boolean isEnglish = false;
     public static Boolean isSpanish = false;
+    public static int currentUserId = 0; 
     
     
     
