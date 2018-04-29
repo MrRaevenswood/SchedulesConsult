@@ -211,18 +211,6 @@ public class appointment implements Initializable {
                 };
 
                 insertAppointment.accept(addScheduleQuery);
-            
-                int fifteenMinsInMilliSeconds = 15 * 60 * 1000;
-                int delayInMilliseconds = (int) (((newAppt.appointmentStart.toEpochSecond(ZoneOffset.UTC) - LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) * 1000) - fifteenMinsInMilliSeconds);
-                
-                Timeline apptAlarm = new Timeline(new KeyFrame(Duration.millis(delayInMilliseconds),
-                ae -> alertPop.accept("Appointment In 15 Minutes for user " + SchedulesConsult.currentLogIn , "Please prepare for your appointment,with "
-                        + newAppt.appointmentContact + " ,which is in 15 minutes")));
-                
-                apptAlarm.play();
-                
-                //appointmentReminder.schedule(new scheduleAppointmentReminder(),delayInMilliseconds);
-
                 
             }catch(SQLException ex){ 
                 
@@ -373,26 +361,7 @@ public class appointment implements Initializable {
 
 	public void setReminderIncrement(int reminderIncrement) {
 		this.reminderIncrement = reminderIncrement;
-	}
-
-
-        public class scheduleAppointmentReminder extends TimerTask{
-            private LocalDateTime timeToBeRemindedAt;
-            
-            BiConsumer<String,String> alertPop = (t,c) -> {
-                   Alert newAlert = new Alert(Alert.AlertType.ERROR);
-                   newAlert.setTitle(t);
-                   newAlert.setContentText(c);
-                   newAlert.showAndWait();
-               };
-            
-
-            @Override
-            public void run() {
-                alertPop.accept("Appointment In 15 Minutes", "Please prepare for your appointment which is in 15 minutes");
-            }
-                        
-        }    
+	} 
 
         @Override
         public void initialize(URL location, ResourceBundle resources) {

@@ -11,8 +11,11 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.TextStyle;
 import java.util.Date;
 import java.util.Locale;
@@ -22,12 +25,15 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 public class LogIn implements Initializable{
 
@@ -66,6 +72,7 @@ public class LogIn implements Initializable{
             String logInLanguage = "";
             newLogin.setUserName(txt_UserName.getText());
             newLogin.setPassword(pass_Password.getText());
+            int userId;
             
             Locale loginLocale = Locale.getDefault();
            
@@ -91,7 +98,7 @@ public class LogIn implements Initializable{
                     SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
 
                 Statement stmt = dbConn.createStatement();
-                String dbUserQuery = "Select userName, password From user Where userName = '" +  
+                String dbUserQuery = "Select userId, userName, password From user Where userName = '" +  
                         newLogin.userName + "' And password = '" + newLogin.passWord + "'";
                 ResultSet userExists = stmt.executeQuery(dbUserQuery);
                 
@@ -112,6 +119,9 @@ public class LogIn implements Initializable{
                     
                 }else{
                        
+                        userId = userExists.getInt(0);
+                        startApptReminder(userId,dbConn);
+                        
                         dbConn.close();
                         
                         SchedulesConsult.currentLogIn = newLogin.getUserName();
@@ -142,6 +152,8 @@ public class LogIn implements Initializable{
                 sqlException.showAndWait();
                
                 Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ParseException ex) {
+                Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 try {
                     dbConn.close();
@@ -168,6 +180,49 @@ public class LogIn implements Initializable{
 
                 userLog.info("User: " + logIn + " logged in to the system at " + LocalDateTime.now());
             }  
+        }
+        
+        public void startApptReminder(int userId, Connection dbConn) throws SQLException, ParseException{
+
+            String getUserSchedulesQuery = "Select contact, title, start From appointment Where userId = " + userId;
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            int millisecondsUntilAppt;
+            int fifteenMinsInMilliSeconds = 15 * 60 * 1000;
+            
+            
+                Statement stmt = dbConn.createStatement();
+                ResultSet schedulesForUser = stmt.executeQuery(getUserSchedulesQuery);
+                
+                while(schedulesForUser.next()){
+                    
+                    millisecondsUntilAppt = calculateSecondsTillAppointment(
+                            format.parse(schedulesForUser.getString(3)).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(),
+                            fifteenMinsInMilliSeconds);
+                    
+                    if(millisecondsUntilAppt > fifteenMinsInMilliSeconds){
+                        startApptTimer(schedulesForUser.getString(1), schedulesForUser.getString(2), millisecondsUntilAppt);
+                    }else if (millisecondsUntilAppt <= fifteenMinsInMilliSeconds){
+                        startApptTimer(schedulesForUser.getString(1), schedulesForUser.getString(2),0);
+                    }
+
+                }
+            
+        }
+        
+        public int calculateSecondsTillAppointment(LocalDateTime apptTime, int fifteenMinsInMilliSeconds){
+            
+            int delayInMilliseconds = (int) (((apptTime.toEpochSecond(ZoneOffset.UTC) - 
+                        LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) * 1000) - fifteenMinsInMilliSeconds);;
+            return delayInMilliseconds;
+        }
+        
+        public void startApptTimer(String contact, String title, int delayInMilliseconds){
+                
+                Timeline apptAlarm = new Timeline(new KeyFrame(Duration.millis(delayInMilliseconds),
+                ae -> alertPop.accept(title + " appointment In 15 Minutes for user " + SchedulesConsult.currentLogIn , "Please prepare for your appointment,with "
+                        + contact + " ,which is in 15 minutes")));
+                
+                apptAlarm.play();
         }
         
         // Getter and Setter Methods

@@ -178,21 +178,18 @@ public class calendar implements Initializable{
             weeklyDates.clear();
         }
         
-        public void populateAppointmentTable(LocalDate selectedDate) throws ClassNotFoundException{
+        public void populateAppointmentTable(LocalDate selectedDate) throws ClassNotFoundException, SQLException{
             
             tbl_Appointments.getItems().clear();
             
             int year = selectedDate.getYear();
             Month month = selectedDate.getMonth();
             int currentUserId = 1;
-            Connection dbConn = null;
             
-            try{
-                Class.forName("com.mysql.jdbc.Driver");
-                
-                dbConn =  DriverManager.getConnection(
-                    SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
-
+            Class.forName("com.mysql.jdbc.Driver");
+            
+            try( Connection dbConn =  DriverManager.getConnection(
+                    SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);){
                 Statement stmt = dbConn.createStatement();
                 
                 //Use a pivot table and DAYNAME(start) in the Select clause to create the table instead of this mess
@@ -261,14 +258,6 @@ public class calendar implements Initializable{
                               
                 populateMonthlyCalendarView(selectedDate,dbConn);
                             
-            }catch(SQLException ex){
-                Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
-            }finally{
-                try {
-                    dbConn.close();
-                } catch (SQLException ex) {
-                    Logger.getLogger(calendar.class.getName()).log(Level.SEVERE, null, ex);
-                }
             }
             
             
