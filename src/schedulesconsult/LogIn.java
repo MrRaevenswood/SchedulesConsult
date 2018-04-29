@@ -58,6 +58,13 @@ public class LogIn implements Initializable{
                    newAlert.showAndWait();
         };
         
+        BiConsumer<String,String> scheduleReminderPop = (t,c) -> {
+            Alert newReminder = new Alert(Alert.AlertType.INFORMATION);
+            newReminder.setTitle(t);
+            newReminder.setContentText(c);
+            newReminder.showAndWait();
+        };
+        
         public void createNewUser() throws IOException{
             Scene newUser = new Scene(FXMLLoader.load(getClass().getResource("addNewUser.fxml")));
             Stage newUserStage = new Stage();
@@ -119,7 +126,7 @@ public class LogIn implements Initializable{
                     
                 }else{
                        
-                        userId = userExists.getInt(0);
+                        userId = userExists.getInt(1);
                         startApptReminder(userId,dbConn);
                         
                         dbConn.close();
@@ -170,7 +177,7 @@ public class LogIn implements Initializable{
             
             if(userFile.exists()){
                 try(PrintWriter appendLog = new PrintWriter(new BufferedWriter(new FileWriter("C:\\Users\\Public\\Documents\\userLog.log", true)))){
-                    appendLog.println("User: " + logIn + " logged in to the system at " + LocalDateTime.now());
+                    appendLog.println("User: " + logIn + " logged in to the system at " + LocalDateTime.now().atZone(ZoneId.systemDefault()));
                 }    
             }else{
                 userLogFile = new FileHandler("C:\\Users\\Public\\Documents\\userLog.log");
@@ -178,7 +185,7 @@ public class LogIn implements Initializable{
                 SimpleFormatter logFormat = new SimpleFormatter();
                 userLogFile.setFormatter(logFormat);
 
-                userLog.info("User: " + logIn + " logged in to the system at " + LocalDateTime.now());
+                userLog.info("User: " + logIn + " logged in to the system at " + LocalDateTime.now().atZone(ZoneId.systemDefault()));
             }  
         }
         
@@ -201,8 +208,9 @@ public class LogIn implements Initializable{
                     
                     if(millisecondsUntilAppt > fifteenMinsInMilliSeconds){
                         startApptTimer(schedulesForUser.getString(1), schedulesForUser.getString(2), millisecondsUntilAppt);
-                    }else if (millisecondsUntilAppt <= fifteenMinsInMilliSeconds){
-                        startApptTimer(schedulesForUser.getString(1), schedulesForUser.getString(2),0);
+                    }else if (millisecondsUntilAppt <= fifteenMinsInMilliSeconds && millisecondsUntilAppt >= 0){
+                        scheduleReminderPop.accept(schedulesForUser.getString(2) + " appointment In 15 Minutes for user " + SchedulesConsult.currentLogIn , "Please prepare for your appointment,with "
+                        + schedulesForUser.getString(1) + " ,which is in 15 minutes");
                     }
 
                 }
@@ -210,16 +218,16 @@ public class LogIn implements Initializable{
         }
         
         public int calculateSecondsTillAppointment(LocalDateTime apptTime, int fifteenMinsInMilliSeconds){
-            
-            int delayInMilliseconds = (int) (((apptTime.toEpochSecond(ZoneOffset.UTC) - 
-                        LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) * 1000) - fifteenMinsInMilliSeconds);;
+
+            int delayInMilliseconds = (int) ((apptTime.toEpochSecond(ZoneOffset.UTC) - 
+                        LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) * 1000);;
             return delayInMilliseconds;
         }
         
         public void startApptTimer(String contact, String title, int delayInMilliseconds){
                 
                 Timeline apptAlarm = new Timeline(new KeyFrame(Duration.millis(delayInMilliseconds),
-                ae -> alertPop.accept(title + " appointment In 15 Minutes for user " + SchedulesConsult.currentLogIn , "Please prepare for your appointment,with "
+                ae -> scheduleReminderPop.accept(title + " appointment In 15 Minutes for user " + SchedulesConsult.currentLogIn , "Please prepare for your appointment,with "
                         + contact + " ,which is in 15 minutes")));
                 
                 apptAlarm.play();

@@ -115,24 +115,30 @@ public class appointment implements Initializable {
         
         public void createAppointment() throws ClassNotFoundException, SQLException, IOException{
             
-            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            appointment newAppt = null;
             
-            appointment newAppt = new appointment(txt_AppointmentTitle.getText(), txt_AppointmentDescription.getText(),
+            DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            try{
+                newAppt = new appointment(txt_AppointmentTitle.getText(), txt_AppointmentDescription.getText(),
                 txt_AppointmentLocation.getText(), txt_AppointmentContact.getText(), txt_AppointmentURL.getText(),
                 LocalDateTime.parse(datePick_AppointmentDate.getValue() + " " + comBx_StartTime.getSelectionModel().getSelectedItem().toString(), dateFormat), 
                 LocalDateTime.parse(datePick_AppointmentDate.getValue() + " " + comBx_endTime.getSelectionModel().getSelectedItem().toString(), dateFormat),
                 15);
+            }catch (NullPointerException ex){
+                        alertPop.accept("All fields must be filled", "There is an empty field in the form. Please fill it out"
+                                + " as all fields are necessary");
+                    }
+           
             
             LocalDateTime currentTime = LocalDateTime.now();
             LocalTime businessStart = LocalTime.of(8, 0);
             LocalTime businessEnd = LocalTime.of(17 , 0);
 
-            try{
-                Class.forName("com.mysql.jdbc.Driver");
-                
-                Connection dbConn = DriverManager.getConnection(
-                    SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);
-                
+            Class.forName("com.mysql.jdbc.Driver");
+            
+            try(Connection dbConn = DriverManager.getConnection(
+                    SchedulesConsult.databaseConnectionString, SchedulesConsult.databaseUser, SchedulesConsult.databasePassword);){
+
                newAppt.setCustomerId(newAppt, dbConn);
                 
                Statement stmt = dbConn.createStatement();
@@ -189,7 +195,7 @@ public class appointment implements Initializable {
                         + ", createdBy, lastUpdate, lastUpdatedBy, userId) values (" + customerId + " , " + "'" + newAppt.getAppointmentTitle()
                         + "','" + newAppt.getAppointmentDescription() + "','" + newAppt.getAppointmentLocation() + "','" + newAppt.getAppointmentContact() 
                         + "','" + newAppt.getAppointmentUrl() + "','" 
-                        + newAppt.appointmentStart.atZone(ZoneId.systemDefault()) + "','" + newAppt.appointmentEnd.atZone(ZoneId.systemDefault()) + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" 
+                        + newAppt.appointmentStart.atZone(ZoneId.systemDefault()).toLocalDateTime() + "','" + newAppt.appointmentEnd.atZone(ZoneId.systemDefault()).toLocalDateTime() + "','" + currentTime + "','" + SchedulesConsult.currentLogIn + "','" 
                         + currentTime + "','" + SchedulesConsult.currentLogIn + "'," + newUser.getUserIdByName(SchedulesConsult.currentLogIn) + ")" ;
                
                 if(newAppt.isAppointmentOverlapping(dbConn, newAppt.appointmentStart.atZone(ZoneId.systemDefault()), newAppt.appointmentEnd.atZone(ZoneId.systemDefault()))){
@@ -207,16 +213,12 @@ public class appointment implements Initializable {
                         stmt.executeUpdate(s);
                     } catch (SQLException ex) {
                         Logger.getLogger(appointment.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    } 
                 };
 
                 insertAppointment.accept(addScheduleQuery);
                 
-            }catch(SQLException ex){ 
-                
-                Logger.getLogger(LogIn.class.getName()).log(Level.SEVERE, null, ex);
-                return;
-            } 
+            }
             
             close();
         }
@@ -270,25 +272,19 @@ public class appointment implements Initializable {
                 ResultSet allAppts = stmt.executeQuery(allApptsQuery);
                 
                 while(allAppts.next()){
-                   if (allAppts.getInt(2) <= startTime && allAppts.getInt(3) >= startTime){
+                   if ((allAppts.getInt(2) <= startTime && allAppts.getInt(3) >= endTime)
+                           || (allAppts.getInt(2) < startTime && allAppts.getInt(3) > startTime)
+                           || (allAppts.getInt(2) < startTime && allAppts.getInt(3) > endTime)
+                           || (allAppts.getInt(2) > startTime && allAppts.getInt(3) <= endTime)){
                        if(SchedulesConsult.isEnglish == true){
-                           alertPop.accept("Invalid StartTime Choosen", "Please try a start time that is not within range of a current appointment");
+                           alertPop.accept("Invalid Time Choosen", "Please try a time that is not within range of a current appointment");
                        }else if(SchedulesConsult.isSpanish == true){
-                           alertPop.accept("Hora de inicio no válida seleccionada","Intente una hora de inicio que no esté dentro del alcance de una cita actual");
+                           alertPop.accept("Hora no válida seleccionada","Intente una hora que no esté dentro del alcance de una cita actual");
                        }
                        
                        return true;
-                   }
-                   
-                   if(allAppts.getInt(2) <= endTime && allAppts.getInt(3) >= endTime){
-                       
-                       if(SchedulesConsult.isEnglish == true){
-                           alertPop.accept("Invalid EndTime Choosen", "Please try an end time that is not within range of a current appointment");
-                       }else if(SchedulesConsult.isSpanish == true){
-                           alertPop.accept("Hora de finalización no válida elegida","Intente una hora de finalización que no esté dentro del alcance de una cita actual");
-                       }
-                       
-                       return true;
+                   } else {
+                       return false;
                    }
                 }
                 

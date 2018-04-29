@@ -111,7 +111,7 @@ public class calendar implements Initializable{
         private LocalDate selectedDate;
         private ObservableList<AppointmentQueryLabels> data = FXCollections.observableArrayList();
         
-        public void calendarWeeklyDatePopulate() throws ClassNotFoundException{
+        public void calendarWeeklyDatePopulate() throws ClassNotFoundException, SQLException{
             
             tbl_Appointments.refresh();
             
